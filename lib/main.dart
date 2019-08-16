@@ -1,28 +1,16 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:async';
 
-void main() {
-  runApp(MyApp());
-}
+import 'package:flutter/material.dart';
+import 'package:mhiit/theme.dart';
+
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Color.fromRGBO(30, 35, 50, 1),
-        bottomAppBarColor: Color.fromRGBO(30, 35, 50, 1),
-        canvasColor: Color.fromRGBO(50, 55, 65, 1),
-        accentColor: Colors.white,
-        textTheme: TextTheme(
-          headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-          body1: TextStyle(fontSize: 14.0),
-        ),
-      ),
+      title: 'HIIT Timer',
+      theme: AppTheme.dark(),
       home: Home(),
     );
   }
@@ -32,67 +20,106 @@ class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<Home> {
-  int _counter = 0;
+class HomeState extends State<Home> {
+  bool running = false;
+  Duration timerState;
+  Timer timer;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  int warmUpTime;
+  int workTime;
+  int restTime;
+  int coolDownTime;
+  int numberRounds;
+
+  Duration totalTime;
+
+  HomeState({
+    this.warmUpTime = 120,
+    this.workTime = 30,
+    this.restTime = 90,
+    this.coolDownTime = 120,
+    this.numberRounds = 5,
+  }) {
+    timerState = totalTime = Duration(
+      seconds: warmUpTime + (numberRounds * (workTime + restTime)) + restTime,
+    );
+
+    timer = Timer.periodic(Duration(seconds: 1), (t) {
+      if (running) {
+        setState(() {
+          timerState -= Duration(seconds: 1);
+        });
+      }
     });
+  }
+
+  void play() {
+    setState(() {
+      running = !running;
+    });
+  }
+
+  String formatTime(Duration duration) {
+    String pad(num n) {
+      return n.remainder(60).toString().padLeft(2, "0");
+    }
+
+    return "${pad(duration.inMinutes)}:${pad(duration.inSeconds)}";
+  }
+
+  String formatTotalTime(Duration duration) {
+    String pad(num n) {
+      return n.remainder(60).toString().padLeft(2, "0");
+    }
+
+    return "${pad(duration.inHours)}:${pad(duration.inMinutes)}:${pad(duration.inSeconds)}";
+  }
+
+  Color timerColor() {
+    return Color.fromRGBO(231, 72, 86, 1);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "HIIT",
-          style: TextStyle(fontFamily: "BioRhyme", letterSpacing: 5, fontSize: 30),
-        ),
-      ),
+      backgroundColor: timerColor(),
+      appBar: AppBar(title: Text("HIIT"), centerTitle: true),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 200,
-            decoration: BoxDecoration(
-              color: Colors.lightBlue[100],
-              borderRadius: BorderRadius.circular(25),
-            ),
-          ),
+          Text(formatTime(timerState), style: Theme.of(context).textTheme.display4),
+          LinearProgressIndicator(value: 0.05),
           Text(
-            'You have pushed the button this many times:',
-          ),
-          Text(
-            '$_counter',
-            style: Theme.of(context).textTheme.display1,
+            "Work",
+            style: Theme.of(context).textTheme.display3,
           ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Start',
-        child: Icon(Icons.timer),
+        onPressed: play,
+        tooltip: running ? "Pause" : "Play",
+        child: Icon(running ? Icons.pause : Icons.play_arrow),
+        shape: StadiumBorder(side: BorderSide(width: 3)),
       ),
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         child: Row(
-          textDirection: TextDirection.rtl,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
+          children: [
             IconButton(
-              icon: Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
+              icon: Icon(Icons.settings, color: Colors.white),
+              tooltip: "Settings",
               onPressed: () {},
-            )
+            ),
+            IconButton(
+              icon: Icon(Icons.replay, color: Colors.white),
+              tooltip: "Restart",
+              onPressed: () {},
+            ),
           ],
         ),
       ),
