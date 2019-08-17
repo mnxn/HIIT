@@ -23,10 +23,20 @@ class Home extends StatefulWidget {
   HomeState createState() => HomeState();
 }
 
+enum HIITInterval {
+  Setup,
+  WarmUp,
+  Work,
+  Rest,
+  CoolDown,
+  Done,
+}
+
 class HomeState extends State<Home> {
-  bool running = false;
-  Duration timerState;
   Timer timer;
+  bool isRunning = false;
+
+  Duration elapsedTime = Duration();
 
   int warmUpTime;
   int workTime;
@@ -34,52 +44,104 @@ class HomeState extends State<Home> {
   int coolDownTime;
   int numberRounds;
 
-  Duration totalTime;
-
   HomeState({
     this.warmUpTime = 120,
     this.workTime = 30,
     this.restTime = 90,
     this.coolDownTime = 120,
-    this.numberRounds = 5,
+    this.numberRounds = 8,
   }) {
-    timerState = totalTime = Duration(
-      seconds: warmUpTime + (numberRounds * (workTime + restTime)) + restTime,
-    );
-
     timer = Timer.periodic(Duration(seconds: 1), (t) {
-      if (running) {
+      if (isRunning && currentInterval != HIITInterval.Done) {
         setState(() {
-          timerState -= Duration(seconds: 1);
+          elapsedTime += Duration(seconds: 1);
         });
       }
     });
   }
 
-  void play() {
+  HIITInterval get currentInterval {
+    int bodyTime = (numberRounds * (workTime + restTime));
+
+    if (elapsedTime.inSeconds == 0) return HIITInterval.Setup;
+    if (elapsedTime.inSeconds >= warmUpTime + bodyTime + coolDownTime) return HIITInterval.Done;
+
+    if (elapsedTime.inSeconds < warmUpTime) return HIITInterval.WarmUp;
+    if (elapsedTime.inSeconds >= warmUpTime + bodyTime) return HIITInterval.CoolDown;
+
+    if ((elapsedTime.inSeconds - warmUpTime) % (workTime + restTime) < workTime) {
+      return HIITInterval.Work;
+    }
+    if ((elapsedTime.inSeconds - warmUpTime) % (workTime + restTime) < workTime + restTime) {
+      return HIITInterval.Rest;
+    }
+
+    return null;
+  }
+
+  void playpause() {
     setState(() {
-      running = !running;
+      isRunning = !isRunning;
     });
   }
 
-  String formatTime(Duration duration) {
-    String pad(num n) {
-      return n.remainder(60).toString().padLeft(2, "0");
-    }
-
-    return "${pad(duration.inMinutes)}:${pad(duration.inSeconds)}";
+  void restart() {
+    setState(() {
+      isRunning = false;
+      elapsedTime = Duration();
+    });
   }
 
-  String formatTotalTime(Duration duration) {
+  Color timerColor() {
+    switch (currentInterval) {
+      case HIITInterval.WarmUp:
+      case HIITInterval.CoolDown:
+        return Color.fromRGBO(99, 108, 122, 1);
+      case HIITInterval.Work:
+        return Color.fromRGBO(231, 72, 86, 1);
+      case HIITInterval.Rest:
+        return Color.fromRGBO(0, 204, 106, 1);
+      default:
+        return Color.fromRGBO(45, 51, 59, 1);
+    }
+  }
+
+  String timerText() {
+    switch (currentInterval) {
+      case HIITInterval.Setup:
+        return "Press Start";
+      case HIITInterval.WarmUp:
+        return "Warm Up";
+      case HIITInterval.Work:
+        return "Work";
+      case HIITInterval.Rest:
+        return "Rest";
+      case HIITInterval.CoolDown:
+        return "Cool Down";
+      case HIITInterval.Done:
+        return "Done";
+    }
+    return null;
+  }
+
+  String timeRemaining() {
+    String formatTime(Duration duration) {
+      String pad(num n) {
+        return n.remainder(60).toString().padLeft(2, "0");
+      }
+
+      return "${pad(duration.inMinutes)}:${pad(duration.inSeconds)}";
+    }
+
+    return formatTime(elapsedTime);
+  }
+
+  String totalTime(Duration duration) {
     String pad(num n) {
       return n.remainder(60).toString().padLeft(2, "0");
     }
 
     return "${pad(duration.inHours)}:${pad(duration.inMinutes)}:${pad(duration.inSeconds)}";
-  }
-
-  Color timerColor() {
-    return Color.fromRGBO(231, 72, 86, 1);
   }
 
   @override
@@ -90,19 +152,16 @@ class HomeState extends State<Home> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(formatTime(timerState), style: Theme.of(context).textTheme.display4),
+          Text(timeRemaining(), style: Theme.of(context).textTheme.display4),
           LinearProgressIndicator(value: 0.05),
-          Text(
-            "Work",
-            style: Theme.of(context).textTheme.display3,
-          ),
+          Text(timerText(), style: Theme.of(context).textTheme.display3),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: play,
-        tooltip: running ? "Pause" : "Play",
-        child: Icon(running ? Icons.pause : Icons.play_arrow),
+        onPressed: playpause,
+        tooltip: isRunning ? "Pause" : "Play",
+        child: Icon(isRunning ? Icons.pause : Icons.play_arrow),
         shape: StadiumBorder(side: BorderSide(width: 3)),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -118,7 +177,7 @@ class HomeState extends State<Home> {
             IconButton(
               icon: Icon(Icons.replay, color: Colors.white),
               tooltip: "Restart",
-              onPressed: () {},
+              onPressed: restart,
             ),
           ],
         ),
