@@ -10,13 +10,5 @@ dependencies:
   flutter:
     sdk: flutter
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
 flutter:
   uses-material-design: true
-  fonts:
-    - family: BioRhyme
-      fonts:
-        - asset: fonts/BioRhyme-Regular.ttf
