@@ -9,6 +9,7 @@ class AppTheme {
 
   static ThemeData dark() {
     final TextTheme defaultTheme = Typography().black;
+
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: Colors.black,
@@ -25,14 +26,15 @@ class AppTheme {
         ),
       ),
       textTheme: TextTheme(
-        display2: defaultTheme.display4.copyWith(color: CupertinoColors.inactiveGray),
-        display4: defaultTheme.display4.copyWith(color: Colors.white),
+        display1: defaultTheme.display1.copyWith(color: CupertinoColors.inactiveGray, fontSize: 34),
+        display2: defaultTheme.display2.copyWith(color: CupertinoColors.inactiveGray, fontSize: 45),
+        display4: defaultTheme.display4.copyWith(color: Colors.white, fontSize: 112),
       ),
     );
   }
 
   static ThemeData light() {
-    final TextTheme defaultTheme = Typography().black;
+    final TextTheme defaultTheme = Typography().white;
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: CupertinoColors.extraLightBackgroundGray,
@@ -49,8 +51,9 @@ class AppTheme {
         ),
       ),
       textTheme: TextTheme(
-        display2: defaultTheme.display4.copyWith(color: CupertinoColors.inactiveGray),
-        display4: defaultTheme.display4.copyWith(color: Colors.black),
+        display1: defaultTheme.display1.copyWith(color: CupertinoColors.inactiveGray, fontSize: 34),
+        display2: defaultTheme.display2.copyWith(color: CupertinoColors.inactiveGray, fontSize: 45),
+        display4: defaultTheme.display4.copyWith(color: Colors.black, fontSize: 112),
       ),
     );
   }

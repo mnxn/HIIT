@@ -3,13 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:mhiit/theme.dart';
 import 'package:mhiit/hiit.dart';
 
-void main() {
-  runApp(MaterialApp(
-    title: 'HIIT Timer',
-    theme: AppTheme.dark(),
-    home: Home(),
-  ));
-}
+void main() => runApp(MaterialApp(title: 'HIIT Timer', home: Home()));
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -20,6 +14,8 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   HIITTimer timer;
+  ThemeData theme = AppTheme.dark();
+  AnimationController _controller;
 
   Color timerColor() {
     switch (timer.current.kind) {
@@ -35,12 +31,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  AnimationController _controller;
-
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, value: 0);
+    _controller = AnimationController(vsync: this, value: 1);
     _controller.addListener(() => setState(() {}));
 
     timer = HIITTimer((double value) {
@@ -53,73 +47,80 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: timerColor(),
-      appBar: AppBar(title: Text(timer.titleText), centerTitle: true),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Stack(
-            alignment: AlignmentDirectional.center,
+    return Theme(
+        data: theme,
+        child: Scaffold(
+          backgroundColor: timerColor(),
+          appBar: AppBar(title: Text(timer.titleText), centerTitle: true),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(color: Theme.of(context).primaryColor, shape: BoxShape.circle),
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  height: MediaQuery.of(context).size.width * 0.85,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(timer.repText, style: Theme.of(context).textTheme.display1),
-                      Text(timer.current.remainingText, style: Theme.of(context).textTheme.display4),
-                      Text(timer.subtext, style: Theme.of(context).textTheme.display2),
-                    ],
-                  ),
-                ),
-              ),
-              Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.width * 0.8,
-                  child: CircularProgressIndicator(
-                    value: _controller.value,
-                    backgroundColor: Color.lerp(
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).accentColor,
-                      0.25,
+              Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(color: theme.primaryColor, shape: BoxShape.circle),
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      height: MediaQuery.of(context).size.width * 0.85,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(timer.repText, style: theme.textTheme.display1),
+                          Text(timer.current.remainingText, style: theme.textTheme.display4),
+                          Text(timer.subtext, style: theme.textTheme.display2),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.width * 0.8,
+                      child: CircularProgressIndicator(
+                        value: _controller.value,
+                        backgroundColor: Color.lerp(
+                          theme.primaryColor,
+                          theme.accentColor,
+                          0.25,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               )
             ],
-          )
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
-        shape: StadiumBorder(side: BorderSide(width: 3)),
-        tooltip: timer.isRunning ? "Pause" : "Play",
-        onPressed: () => setState(timer.playpause),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              tooltip: "Settings",
-              onPressed: () {},
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: FloatingActionButton(
+            child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
+            shape: StadiumBorder(side: BorderSide(color: theme.primaryColor, width: 3)),
+            tooltip: timer.isRunning ? "Pause" : "Play",
+            onPressed: () => setState(timer.playpause),
+          ),
+          bottomNavigationBar: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  tooltip: "Settings",
+                  onPressed: () => setState(() {
+                    if (theme == AppTheme.dark())
+                      theme = AppTheme.light();
+                    else
+                      theme = AppTheme.dark();
+                  }),
+                ),
+                IconButton(
+                  icon: Icon(Icons.replay),
+                  tooltip: "Restart",
+                  onPressed: () => setState(timer.restart),
+                ),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.replay),
-              tooltip: "Restart",
-              onPressed: () => setState(timer.restart),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

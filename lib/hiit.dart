@@ -38,7 +38,7 @@ class HIITTimer {
   bool isRunning = false;
   ListQueue<HIITInterval> intervals;
   Duration elapsed = Duration();
-  int currentRep = 1;
+  int reps = 0;
 
   Function(double) progressTo;
 
@@ -50,13 +50,13 @@ class HIITTimer {
 
   HIITTimer(
     this.progressTo, {
-    this.warmUpTime = 120,
-    this.workTime = 30,
-    this.restTime = 90,
-    this.coolDownTime = 120,
-    this.totalReps = 8,
+    this.warmUpTime = 3,
+    this.workTime = 2,
+    this.restTime = 2,
+    this.coolDownTime = 3,
+    this.totalReps = 1,
   }) {
-    setupIntervals();
+    intervals = setupIntervals();
     Timer.periodic(Duration(seconds: 1), (t) {
       if (isRunning) {
         if (current.kind == IntervalKind.Done) {
@@ -65,11 +65,12 @@ class HIITTimer {
           return;
         }
 
-        if (current.kind == IntervalKind.Rest && current.remaining.inSeconds == 1) currentRep++;
-
-        elapsed += Duration(seconds: 1);
+        if (current.kind != IntervalKind.Setup) elapsed += Duration(seconds: 1);
         intervals.first.remaining -= Duration(seconds: 1);
+
         if (intervals.first.remaining.inSeconds <= 0) intervals.removeFirst();
+
+        if (current.kind == IntervalKind.Work && current.remaining == current.total) reps++;
         if (current.kind == IntervalKind.Done) isRunning = false;
 
         progressTo(current.percent);
@@ -77,16 +78,17 @@ class HIITTimer {
     });
   }
 
-  void setupIntervals() {
-    intervals = ListQueue();
-    intervals.add(HIITInterval.setup());
-    intervals.add(HIITInterval.warmUp(warmUpTime));
+  ListQueue<HIITInterval> setupIntervals() {
+    ListQueue<HIITInterval> queue = ListQueue();
+    queue.add(HIITInterval.setup());
+    queue.add(HIITInterval.warmUp(warmUpTime));
     for (var i = 0; i < totalReps; i++) {
-      intervals.add(HIITInterval.work(workTime));
-      intervals.add(HIITInterval.rest(restTime));
+      queue.add(HIITInterval.work(workTime));
+      queue.add(HIITInterval.rest(restTime));
     }
-    intervals.add(HIITInterval.coolDown(coolDownTime));
-    intervals.add(HIITInterval.done());
+    queue.add(HIITInterval.coolDown(coolDownTime));
+    queue.add(HIITInterval.done());
+    return queue;
   }
 
   void playpause() {
@@ -95,9 +97,9 @@ class HIITTimer {
 
   void restart() {
     isRunning = false;
-    setupIntervals();
+    intervals = setupIntervals();
     elapsed = Duration();
-    currentRep = 1;
+    reps = 0;
     progressTo(1);
   }
 
@@ -129,15 +131,7 @@ class HIITTimer {
     }
   }
 
-  String get repText {
-    switch (current.kind) {
-      case IntervalKind.Work:
-      case IntervalKind.Rest:
-        return "$currentRep/$totalReps";
-      default:
-        return "";
-    }
-  }
+  String get repText => "$reps/$totalReps";
 }
 
 String pad(int n) {
