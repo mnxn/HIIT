@@ -1,9 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:mhiit/theme.dart';
 import 'package:mhiit/hiit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MaterialApp(title: 'HIIT Timer', home: Home()));
+SharedPreferences preferences;
+
+bool useDarkThemePref;
+int numRepsPref;
+
+void main() async {
+  preferences = await SharedPreferences.getInstance();
+
+  useDarkThemePref = await defaultBoolPref("darktheme", false);
+  numRepsPref = await defaultIntPref("numreps", 8);
+
+  runApp(MaterialApp(title: 'HIIT Timer', home: Home()));
+}
+
+Future<bool> defaultBoolPref(String key, bool defaultVal) async {
+  bool val = preferences.getBool(key);
+  if (val == null) {
+    await preferences.setBool(key, defaultVal);
+    return defaultVal;
+  }
+  return val;
+}
+
+Future<int> defaultIntPref(String key, int defaultVal) async {
+  int val = preferences.getInt(key);
+  if (val == null) {
+    await preferences.setInt(key, defaultVal);
+    return defaultVal;
+  }
+  return val;
+}
+
+theme() {
+  return useDarkThemePref ? AppTheme.dark() : AppTheme.light();
+}
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -14,7 +51,6 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   HIITTimer timer;
-  ThemeData theme = AppTheme.dark();
   AnimationController _controller;
 
   Color timerColor() {
@@ -29,6 +65,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       default:
         return AppTheme.defaultColor;
     }
+  }
+
+  void setDarkMode(bool useDarkTheme) {
+    setState(() {
+      useDarkThemePref = useDarkTheme;
+      preferences.setBool("darktheme", useDarkTheme).then((_) {});
+    });
   }
 
   @override
@@ -48,7 +91,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Theme(
-        data: theme,
+        data: theme(),
         child: Scaffold(
           backgroundColor: timerColor(),
           appBar: AppBar(title: Text(timer.titleText), centerTitle: true),
@@ -60,15 +103,15 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 children: [
                   Center(
                     child: Container(
-                      decoration: BoxDecoration(color: theme.primaryColor, shape: BoxShape.circle),
+                      decoration: BoxDecoration(color: theme().primaryColor, shape: BoxShape.circle),
                       width: MediaQuery.of(context).size.width * 0.85,
                       height: MediaQuery.of(context).size.width * 0.85,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(timer.repText, style: theme.textTheme.display1),
-                          Text(timer.current.remainingText, style: theme.textTheme.display4),
-                          Text(timer.subtext, style: theme.textTheme.display2),
+                          Text(timer.repText, style: theme().textTheme.display1),
+                          Text(timer.current.remainingText, style: theme().textTheme.display4),
+                          Text(timer.subtext, style: theme().textTheme.display2),
                         ],
                       ),
                     ),
@@ -80,8 +123,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       child: CircularProgressIndicator(
                         value: _controller.value,
                         backgroundColor: Color.lerp(
-                          theme.primaryColor,
-                          theme.accentColor,
+                          theme().primaryColor,
+                          theme().accentColor,
                           0.25,
                         ),
                       ),
@@ -94,7 +137,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
             child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
-            shape: StadiumBorder(side: BorderSide(color: theme.primaryColor, width: 3)),
+            shape: StadiumBorder(side: BorderSide(color: theme().primaryColor, width: 3)),
             tooltip: timer.isRunning ? "Pause" : "Play",
             onPressed: () => setState(timer.playpause),
           ),
@@ -106,12 +149,17 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 IconButton(
                   icon: Icon(Icons.settings),
                   tooltip: "Settings",
-                  onPressed: () => setState(() {
-                    if (theme == AppTheme.dark())
-                      theme = AppTheme.light();
-                    else
-                      theme = AppTheme.dark();
-                  }),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Config(onDarkModeChanged: setDarkMode),
+                      ),
+                    );
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.replay),
@@ -122,5 +170,30 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
           ),
         ));
+  }
+}
+
+class Config extends StatefulWidget {
+  final void Function(bool) onDarkModeChanged;
+
+  Config({Key key, this.onDarkModeChanged}) : super(key: key);
+
+  @override
+  ConfigState createState() => ConfigState(onDarkModeChanged: onDarkModeChanged);
+}
+
+class ConfigState extends State<Config> {
+  final void Function(bool) onDarkModeChanged;
+
+  ConfigState({@required this.onDarkModeChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Switch(
+        onChanged: onDarkModeChanged,
+        value: useDarkThemePref,
+      ),
+    ]);
   }
 }

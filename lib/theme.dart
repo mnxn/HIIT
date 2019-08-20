@@ -19,9 +19,9 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         textTheme: TextTheme(
           title: TextStyle(
-            letterSpacing: 4,
-            fontSize: 30,
             color: Colors.white,
+            fontSize: 30,
+            letterSpacing: 4,
           ),
         ),
       ),
@@ -44,9 +44,9 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         textTheme: TextTheme(
           title: TextStyle(
+            color: Colors.black,
             fontSize: 30,
             letterSpacing: 4,
-            color: Colors.black,
           ),
         ),
       ),
