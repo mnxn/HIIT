@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/widgets.dart';
+
 enum IntervalKind { Setup, WarmUp, Work, Rest, CoolDown, Done }
 
 class HIITInterval {
@@ -8,16 +10,16 @@ class HIITInterval {
   final Duration total;
   Duration remaining;
 
-  HIITInterval(this.kind, int duration)
-      : total = Duration(seconds: duration),
-        remaining = Duration(seconds: duration);
+  HIITInterval(this.kind, Duration duration)
+      : total = duration,
+        remaining = duration;
 
-  factory HIITInterval.setup() => HIITInterval(IntervalKind.Setup, 0);
-  factory HIITInterval.warmUp(int duration) => HIITInterval(IntervalKind.WarmUp, duration);
-  factory HIITInterval.work(int duration) => HIITInterval(IntervalKind.Work, duration);
-  factory HIITInterval.rest(int duration) => HIITInterval(IntervalKind.Rest, duration);
-  factory HIITInterval.coolDown(int duration) => HIITInterval(IntervalKind.CoolDown, duration);
-  factory HIITInterval.done() => HIITInterval(IntervalKind.Done, 0);
+  factory HIITInterval.setup() => HIITInterval(IntervalKind.Setup, Duration());
+  factory HIITInterval.warmUp(Duration duration) => HIITInterval(IntervalKind.WarmUp, duration);
+  factory HIITInterval.work(Duration duration) => HIITInterval(IntervalKind.Work, duration);
+  factory HIITInterval.rest(Duration duration) => HIITInterval(IntervalKind.Rest, duration);
+  factory HIITInterval.coolDown(Duration duration) => HIITInterval(IntervalKind.CoolDown, duration);
+  factory HIITInterval.done() => HIITInterval(IntervalKind.Done, Duration());
 
   double get percent {
     switch (kind) {
@@ -38,23 +40,23 @@ class HIITTimer {
   bool isRunning = false;
   ListQueue<HIITInterval> intervals;
   Duration elapsed = Duration();
-  int reps = 0;
+  int elapsedSets = 0;
 
   Function(double) progressTo;
 
-  int warmUpTime;
-  int workTime;
-  int restTime;
-  int coolDownTime;
-  int totalReps;
+  Duration warmUpTime;
+  Duration workTime;
+  Duration restTime;
+  Duration coolDownTime;
+  int sets;
 
   HIITTimer(
     this.progressTo, {
-    this.warmUpTime = 3,
-    this.workTime = 2,
-    this.restTime = 2,
-    this.coolDownTime = 3,
-    this.totalReps = 1,
+    @required this.warmUpTime,
+    @required this.workTime,
+    @required this.restTime,
+    @required this.coolDownTime,
+    @required this.sets,
   }) {
     intervals = setupIntervals();
     Timer.periodic(Duration(seconds: 1), (t) {
@@ -68,11 +70,12 @@ class HIITTimer {
         if (current.kind != IntervalKind.Setup) elapsed += Duration(seconds: 1);
         intervals.first.remaining -= Duration(seconds: 1);
 
-        if (intervals.first.remaining.inSeconds <= 0) intervals.removeFirst();
+        while (current.kind != IntervalKind.Done && current.remaining.inSeconds <= 0) {
+          intervals.removeFirst();
+          if (current.kind == IntervalKind.Work && current.remaining == current.total) elapsedSets++;
+        }
 
-        if (current.kind == IntervalKind.Work && current.remaining == current.total) reps++;
         if (current.kind == IntervalKind.Done) isRunning = false;
-
         progressTo(current.percent);
       }
     });
@@ -82,7 +85,7 @@ class HIITTimer {
     ListQueue<HIITInterval> queue = ListQueue();
     queue.add(HIITInterval.setup());
     queue.add(HIITInterval.warmUp(warmUpTime));
-    for (var i = 0; i < totalReps; i++) {
+    for (var i = 0; i < sets; i++) {
       queue.add(HIITInterval.work(workTime));
       queue.add(HIITInterval.rest(restTime));
     }
@@ -99,7 +102,7 @@ class HIITTimer {
     isRunning = false;
     intervals = setupIntervals();
     elapsed = Duration();
-    reps = 0;
+    elapsedSets = 0;
     progressTo(1);
   }
 
@@ -131,7 +134,7 @@ class HIITTimer {
     }
   }
 
-  String get repText => "$reps/$totalReps";
+  String get repText => "$elapsedSets/$sets";
 }
 
 String pad(int n) {
