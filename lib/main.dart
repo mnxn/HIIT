@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hiit/theme.dart';
@@ -11,6 +12,7 @@ SharedPreferences preferences;
 
 void main() async {
   preferences = await SharedPreferences.getInstance();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MaterialApp(title: 'HIIT Timer', home: Home()));
 }
 
