@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:mhiit/theme.dart';
-import 'package:mhiit/hiit.dart';
-import 'package:mhiit/themed_timerpicker.dart';
-import 'package:mhiit/themed_numberpicker.dart';
+import 'package:hiit/theme.dart';
+import 'package:hiit/hiit.dart';
+import 'package:hiit/themed_timerpicker.dart';
+import 'package:hiit/themed_numberpicker.dart';
 
 SharedPreferences preferences;
 
@@ -172,11 +172,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.all(25),
                   child: ListTile(
                     leading: Icon(Icons.settings, color: theme().primaryColor),
+                    dense: true,
                     title: Text('Settings', textScaleFactor: 1.5, style: TextStyle(color: theme().primaryColor)),
                   ),
                 ),
                 ListTile(
                   leading: Icon(Icons.style),
+                  dense: true,
                   title: Text('Theme', textScaleFactor: 1.25),
                 ),
                 RadioListTile(
@@ -194,6 +196,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 Divider(color: theme().accentColor),
                 ListTile(
                   leading: Icon(Icons.timer),
+                  dense: true,
                   title: Text('Timer', textScaleFactor: 1.25),
                 ),
                 TimerInput(

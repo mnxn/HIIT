@@ -1,4 +1,4 @@
-package com.example.mhiit;
+package com.github.mnxn.hiit;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
