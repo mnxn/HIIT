@@ -6,13 +6,15 @@ class NumberInput extends StatefulWidget {
   const NumberInput({
     Key? key,
     required this.title,
-    required this.label,
+    required this.singleLabel,
+    required this.pluralLabel,
     required this.onConfirm,
     required this.value,
   }) : super(key: key);
 
   final String title;
-  final String label;
+  final String singleLabel;
+  final String pluralLabel;
   final void Function(int) onConfirm;
   final int value;
 
@@ -52,7 +54,8 @@ class NumberInputState extends State<NumberInput> {
                     data: Theme.of(c),
                     child: NumberPicker(
                       title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-                      label: widget.label,
+                      singleLabel: widget.singleLabel,
+                      pluralLabel: widget.pluralLabel,
                       initialValue: widget.value,
                       onConfirm: widget.onConfirm,
                     ),
@@ -71,13 +74,15 @@ class NumberPicker extends StatefulWidget {
   const NumberPicker({
     Key? key,
     required this.title,
-    required this.label,
+    required this.singleLabel,
+    required this.pluralLabel,
     this.initialValue = 0,
     required this.onConfirm,
   }) : super(key: key);
 
   final Widget title;
-  final String label;
+  final String singleLabel;
+  final String pluralLabel;
   final int initialValue;
   final ValueChanged<int> onConfirm;
 
@@ -95,18 +100,6 @@ class NumberPickerState extends State<NumberPicker> {
   void initState() {
     super.initState();
     selectedValue = widget.initialValue;
-  }
-
-  // Builds a text label with customized scale factor and font weight.
-  Widget buildLabel(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.secondary,
-        fontSize: 17.0,
-        fontWeight: FontWeight.w600,
-      ),
-    );
   }
 
   @override
@@ -162,7 +155,14 @@ class NumberPickerState extends State<NumberPicker> {
               alignment: Alignment.center,
               width: 330 / 4,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              child: buildLabel(widget.label),
+              child: Text(
+                selectedValue == 1 ? widget.singleLabel : widget.pluralLabel,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),

@@ -232,7 +232,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               NumberInput(
                 title: "Number of Sets",
-                label: "sets",
+                singleLabel: "set",
+                pluralLabel: "sets",
                 value: preferences.getInt("sets") ?? Default.sets,
                 onConfirm: (value) {
                   _do(preferences.setInt("sets", value));
