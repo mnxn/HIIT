@@ -113,8 +113,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
   }
 
   Widget buildMinutePicker() {
-    double offAxisFraction;
-    offAxisFraction = -0.5 * textDirectionFactor;
+    double offAxisFraction = -0.5 * textDirectionFactor;
 
     return CupertinoPicker(
       scrollController: FixedExtentScrollController(
@@ -175,9 +174,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
   }
 
   Widget buildSecondPicker() {
-    final double offAxisFraction = 0.5 * textDirectionFactor;
-
-    const double secondPickerWidth = 330 / 10;
+    double offAxisFraction = -0.5 * textDirectionFactor;
 
     return CupertinoPicker(
       scrollController: FixedExtentScrollController(
@@ -201,11 +198,12 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
           label: semanticsLabel,
           excludeSemantics: true,
           child: Container(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerRight,
+            padding:
+                textDirectionFactor == 1 ? const EdgeInsets.only(right: 330 / 4) : const EdgeInsets.only(left: 330 / 4),
             child: Container(
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              width: secondPickerWidth,
               child: Text(
                 localizations.timerPickerSecond(second),
                 style: TextStyle(color: widget.accentColor, fontFamily: defaultFont()),
@@ -218,18 +216,15 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
   }
 
   Widget buildSecondColumn() {
-    const double secondPickerWidth = 330 / 10;
     return Stack(
       children: [
         buildSecondPicker(),
         IgnorePointer(
           child: Container(
-            alignment: Alignment.centerLeft,
-            padding: textDirectionFactor == 1
-                ? const EdgeInsets.only(left: secondPickerWidth)
-                : const EdgeInsets.only(right: secondPickerWidth),
+            alignment: Alignment.centerRight,
             child: Container(
               alignment: Alignment.centerLeft,
+              width: 330 / 4,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: buildLabel(localizations.timerPickerSecondLabel(selectedSecond)),
             ),
