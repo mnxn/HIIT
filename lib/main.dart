@@ -180,6 +180,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             border: Border(right: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 2)),
           ),
           child: ListView(
+            physics: const ClampingScrollPhysics(),
             children: [
               Container(
                 color: Theme.of(context).colorScheme.secondary,
