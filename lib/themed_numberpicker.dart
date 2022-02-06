@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hiit/theme.dart';
 
+String padCenter(int value, int length) {
+  String source = value.toString();
+  int spaces = length - source.length;
+  int padLeft = ((spaces / 2) as int) + source.length;
+  return source.padLeft(padLeft).padRight(length);
+}
+
 class NumberInput extends StatefulWidget {
   const NumberInput({
     Key? key,
@@ -39,7 +46,11 @@ class NumberInputState extends State<NumberInput> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
           child: OutlinedButton(
-            child: Text("${widget.value}", textScaleFactor: 1.1, style: const TextStyle(fontFamily: "monospace")),
+            child: Text(
+              padCenter(widget.value, 5),
+              textScaleFactor: 1.1,
+              style: const TextStyle(fontFamily: "monospace"),
+            ),
             style: OutlinedButton.styleFrom(side: BorderSide(color: widget.accentColor, width: 1)),
             onPressed: () => showDialog(
               context: context,
