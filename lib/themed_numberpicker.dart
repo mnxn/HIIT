@@ -2,18 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hiit/theme.dart';
 
-String padCenter(int value) {
-  String str = value.toString();
-  switch (str.length) {
-    case 1:
-      return "  $str  ";
-    case 2:
-      return " $str  ";
-    default:
-      return str;
-  }
-}
-
 class NumberInput extends StatefulWidget {
   const NumberInput({
     Key? key,
@@ -50,22 +38,25 @@ class NumberInputState extends State<NumberInput> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-          child: OutlinedButton(
-            child: Text(
-              padCenter(widget.value),
-              textScaleFactor: 1.1,
-              style: const TextStyle(fontFamily: "monospace"),
-            ),
-            style: OutlinedButton.styleFrom(side: BorderSide(color: widget.accentColor, width: 1)),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => NumberPicker(
-                title: Text(widget.title, style: TextStyle(color: widget.accentColor)),
-                label: widget.label,
-                backgroundColor: widget.backgroundColor,
-                accentColor: widget.accentColor,
-                initialValue: widget.value,
-                onConfirm: widget.onConfirm,
+          child: SizedBox(
+            width: 80,
+            child: OutlinedButton(
+              child: Text(
+                widget.value.toString(),
+                textScaleFactor: 1.1,
+                style: const TextStyle(fontFamily: "monospace"),
+              ),
+              style: OutlinedButton.styleFrom(side: BorderSide(color: widget.accentColor, width: 1)),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => NumberPicker(
+                  title: Text(widget.title, style: TextStyle(color: widget.accentColor)),
+                  label: widget.label,
+                  backgroundColor: widget.backgroundColor,
+                  accentColor: widget.accentColor,
+                  initialValue: widget.value,
+                  onConfirm: widget.onConfirm,
+                ),
               ),
             ),
           ),
