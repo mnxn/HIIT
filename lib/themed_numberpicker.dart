@@ -174,7 +174,7 @@ class NumberPickerState extends State<NumberPicker> {
           side: BorderSide(color: widget.accentColor, width: 1),
           borderRadius: BorderRadius.circular(7),
         ),
-        contentPadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.only(left: 50, right: 50),
         actions: [
           TextButton(
             child: Text("Cancel", style: TextStyle(color: widget.accentColor)),
@@ -192,11 +192,7 @@ class NumberPickerState extends State<NumberPicker> {
         ],
         content: SizedBox(
           height: MediaQuery.of(context).size.height / 4,
-          child: Row(
-            children: [
-              Expanded(child: buildValueColumn()),
-            ],
-          ),
+          child: buildValueColumn(),
         ));
   }
 }
