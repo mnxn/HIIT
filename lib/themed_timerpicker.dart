@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hiit/theme.dart';
 
 String pad(int n) {
   return n.remainder(60).toString().padLeft(2, "0");
 }
 
 class TimerInput extends StatefulWidget {
-  TimerInput({
-    Key key,
-    @required this.context,
-    @required this.title,
-    @required this.onConfirm,
-    @required this.value,
-    @required this.accentColor,
-    @required this.backgroundColor,
+  const TimerInput({
+    Key? key,
+    required this.title,
+    required this.onConfirm,
+    required this.value,
+    required this.accentColor,
+    required this.backgroundColor,
   }) : super(key: key);
 
-  final BuildContext context;
   final String title;
   final void Function(Duration) onConfirm;
   final Duration value;
@@ -35,18 +34,18 @@ class TimerInputState extends State<TimerInput> {
       children: [
         Expanded(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: Text(widget.title, textScaleFactor: 1.15),
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
-          child: OutlineButton(
+          padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+          child: OutlinedButton(
             child: Text("${pad(widget.value.inMinutes)}:${pad(widget.value.inSeconds)}",
-                textScaleFactor: 1.1, style: TextStyle(fontFamily: "monospace")),
-            borderSide: BorderSide(color: widget.accentColor, width: 1),
+                textScaleFactor: 1.1, style: const TextStyle(fontFamily: "monospace")),
+            style: OutlinedButton.styleFrom(side: BorderSide(color: widget.accentColor, width: 1)),
             onPressed: () => showDialog(
-              context: widget.context,
+              context: context,
               builder: (context) => ThemedTimerPicker(
                 title: Text(widget.title, style: TextStyle(color: widget.accentColor)),
                 backgroundColor: widget.backgroundColor,
@@ -63,13 +62,14 @@ class TimerInputState extends State<TimerInput> {
 }
 
 class ThemedTimerPicker extends StatefulWidget {
-  ThemedTimerPicker({
-    @required this.title,
+  const ThemedTimerPicker({
+    Key? key,
+    required this.title,
     this.initialTimerDuration = Duration.zero,
     this.backgroundColor = CupertinoColors.white,
     this.accentColor = CupertinoColors.black,
-    @required this.onConfirm,
-  });
+    required this.onConfirm,
+  }) : super(key: key);
 
   final Widget title;
   final Duration initialTimerDuration;
@@ -82,11 +82,11 @@ class ThemedTimerPicker extends StatefulWidget {
 }
 
 class ThemedTimerPickerState extends State<ThemedTimerPicker> {
-  int textDirectionFactor;
-  CupertinoLocalizations localizations;
+  late int textDirectionFactor;
+  late CupertinoLocalizations localizations;
 
-  int selectedMinute;
-  int selectedSecond;
+  late int selectedMinute;
+  late int selectedSecond;
 
   @override
   void initState() {
@@ -96,9 +96,9 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
   }
 
   // Builds a text label with customized scale factor and font weight.
-  Widget buildLabel(String text) {
+  Widget buildLabel(String? text) {
     return Text(
-      text,
+      text ?? "",
       textScaleFactor: 0.9,
       style: TextStyle(fontWeight: FontWeight.w600, color: widget.accentColor),
     );
@@ -131,8 +131,8 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
         final int minute = index;
 
         final String semanticsLabel = textDirectionFactor == 1
-            ? localizations.timerPickerMinute(minute) + localizations.timerPickerMinuteLabel(minute)
-            : localizations.timerPickerMinuteLabel(minute) + localizations.timerPickerMinute(minute);
+            ? localizations.timerPickerMinute(minute) + (localizations.timerPickerMinuteLabel(minute) ?? "")
+            : (localizations.timerPickerMinuteLabel(minute) ?? "") + localizations.timerPickerMinute(minute);
 
         return Semantics(
           label: semanticsLabel,
@@ -146,7 +146,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Text(
                 localizations.timerPickerMinute(minute),
-                style: TextStyle(color: widget.accentColor),
+                style: TextStyle(color: widget.accentColor, fontFamily: defaultFont()),
               ),
             ),
           ),
@@ -177,7 +177,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
   Widget buildSecondPicker() {
     final double offAxisFraction = 0.5 * textDirectionFactor;
 
-    final double secondPickerWidth = 330 / 10;
+    const double secondPickerWidth = 330 / 10;
 
     return CupertinoPicker(
       scrollController: FixedExtentScrollController(
@@ -194,8 +194,8 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
         final int second = index * 5;
 
         final String semanticsLabel = textDirectionFactor == 1
-            ? localizations.timerPickerSecond(second) + localizations.timerPickerSecondLabel(second)
-            : localizations.timerPickerSecondLabel(second) + localizations.timerPickerSecond(second);
+            ? localizations.timerPickerSecond(second) + (localizations.timerPickerSecondLabel(second) ?? "")
+            : (localizations.timerPickerSecondLabel(second) ?? "") + localizations.timerPickerSecond(second);
 
         return Semantics(
           label: semanticsLabel,
@@ -208,7 +208,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
               width: secondPickerWidth,
               child: Text(
                 localizations.timerPickerSecond(second),
-                style: TextStyle(color: widget.accentColor),
+                style: TextStyle(color: widget.accentColor, fontFamily: defaultFont()),
               ),
             ),
           ),
@@ -218,7 +218,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
   }
 
   Widget buildSecondColumn() {
-    final double secondPickerWidth = 330 / 10;
+    const double secondPickerWidth = 330 / 10;
     return Stack(
       children: [
         buildSecondPicker(),
@@ -226,8 +226,8 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
           child: Container(
             alignment: Alignment.centerLeft,
             padding: textDirectionFactor == 1
-                ? EdgeInsets.only(left: secondPickerWidth)
-                : EdgeInsets.only(right: secondPickerWidth),
+                ? const EdgeInsets.only(left: secondPickerWidth)
+                : const EdgeInsets.only(right: secondPickerWidth),
             child: Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -244,16 +244,19 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
     return AlertDialog(
         title: widget.title,
         backgroundColor: widget.backgroundColor,
-        shape: Border.fromBorderSide(BorderSide(color: widget.accentColor, width: 2)),
-        contentPadding: EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: widget.accentColor, width: 1),
+          borderRadius: BorderRadius.circular(7),
+        ),
+        contentPadding: const EdgeInsets.all(0),
         actions: [
-          FlatButton(
+          TextButton(
             child: Text("Cancel", style: TextStyle(color: widget.accentColor)),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          FlatButton(
+          TextButton(
             child: Text("Confirm", style: TextStyle(color: widget.accentColor)),
             onPressed: () {
               Navigator.pop(context);
@@ -261,7 +264,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
             },
           ),
         ],
-        content: Container(
+        content: SizedBox(
           height: MediaQuery.of(context).size.height / 4,
           child: Row(
             children: [

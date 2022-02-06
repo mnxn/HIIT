@@ -1,34 +1,31 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:flutter/widgets.dart';
-
-enum IntervalKind { Setup, WarmUp, Work, Rest, CoolDown, Done }
+enum IntervalKind { setup, warmUp, work, rest, coolDown, done }
 
 class HIITInterval {
   final IntervalKind kind;
   final Duration total;
   Duration remaining;
 
-  HIITInterval(this.kind, Duration duration)
-      : total = duration,
-        remaining = duration;
+  HIITInterval(this.kind, this.total) : remaining = total;
 
-  factory HIITInterval.setup() => HIITInterval(IntervalKind.Setup, Duration());
-  factory HIITInterval.warmUp(Duration duration) => HIITInterval(IntervalKind.WarmUp, duration);
-  factory HIITInterval.work(Duration duration) => HIITInterval(IntervalKind.Work, duration);
-  factory HIITInterval.rest(Duration duration) => HIITInterval(IntervalKind.Rest, duration);
-  factory HIITInterval.coolDown(Duration duration) => HIITInterval(IntervalKind.CoolDown, duration);
-  factory HIITInterval.done() => HIITInterval(IntervalKind.Done, Duration());
+  factory HIITInterval.setup() => HIITInterval(IntervalKind.setup, const Duration());
+  factory HIITInterval.warmUp(Duration duration) => HIITInterval(IntervalKind.warmUp, duration);
+  factory HIITInterval.work(Duration duration) => HIITInterval(IntervalKind.work, duration);
+  factory HIITInterval.rest(Duration duration) => HIITInterval(IntervalKind.rest, duration);
+  factory HIITInterval.coolDown(Duration duration) => HIITInterval(IntervalKind.coolDown, duration);
+  factory HIITInterval.done() => HIITInterval(IntervalKind.done, const Duration());
 
   double get percent {
     switch (kind) {
-      case IntervalKind.WarmUp:
-      case IntervalKind.Work:
-      case IntervalKind.Rest:
-      case IntervalKind.CoolDown:
+      case IntervalKind.warmUp:
+      case IntervalKind.work:
+      case IntervalKind.rest:
+      case IntervalKind.coolDown:
         return (remaining.inSeconds - 1) / total.inSeconds;
-      default:
+      case IntervalKind.setup:
+      case IntervalKind.done:
         return 0;
     }
   }
@@ -38,8 +35,8 @@ class HIITInterval {
 
 class HIITTimer {
   bool isRunning = false;
-  ListQueue<HIITInterval> intervals;
-  Duration elapsed = Duration();
+  late ListQueue<HIITInterval> intervals;
+  Duration elapsed = const Duration();
   int elapsedSets = 0;
 
   Function(double) progressTo;
@@ -52,30 +49,30 @@ class HIITTimer {
 
   HIITTimer(
     this.progressTo, {
-    @required this.warmUpTime,
-    @required this.workTime,
-    @required this.restTime,
-    @required this.coolDownTime,
-    @required this.sets,
+    required this.warmUpTime,
+    required this.workTime,
+    required this.restTime,
+    required this.coolDownTime,
+    required this.sets,
   }) {
     intervals = setupIntervals();
-    Timer.periodic(Duration(seconds: 1), (t) {
+    Timer.periodic(const Duration(seconds: 1), (t) {
       if (isRunning) {
-        if (current.kind == IntervalKind.Done) {
+        if (current.kind == IntervalKind.done) {
           isRunning = false;
           progressTo(1);
           return;
         }
 
-        if (current.kind != IntervalKind.Setup) elapsed += Duration(seconds: 1);
-        intervals.first.remaining -= Duration(seconds: 1);
+        if (current.kind != IntervalKind.setup) elapsed += const Duration(seconds: 1);
+        intervals.first.remaining -= const Duration(seconds: 1);
 
-        while (current.kind != IntervalKind.Done && current.remaining.inSeconds <= 0) {
+        while (current.kind != IntervalKind.done && current.remaining.inSeconds <= 0) {
           intervals.removeFirst();
-          if (current.kind == IntervalKind.Work && current.remaining == current.total) elapsedSets++;
+          if (current.kind == IntervalKind.work && current.remaining == current.total) elapsedSets++;
         }
 
-        if (current.kind == IntervalKind.Done) isRunning = false;
+        if (current.kind == IntervalKind.done) isRunning = false;
         progressTo(current.percent);
       }
     });
@@ -95,13 +92,13 @@ class HIITTimer {
   }
 
   void playpause() {
-    if (current.kind != IntervalKind.Done) isRunning = !isRunning;
+    if (current.kind != IntervalKind.done) isRunning = !isRunning;
   }
 
   void restart() {
     isRunning = false;
     intervals = setupIntervals();
-    elapsed = Duration();
+    elapsed = const Duration();
     elapsedSets = 0;
     progressTo(1);
   }
@@ -117,20 +114,18 @@ class HIITTimer {
 
   String get subtext {
     switch (current.kind) {
-      case IntervalKind.Setup:
+      case IntervalKind.setup:
         return "Press Start";
-      case IntervalKind.WarmUp:
+      case IntervalKind.warmUp:
         return "Warm Up";
-      case IntervalKind.Work:
+      case IntervalKind.work:
         return "Work";
-      case IntervalKind.Rest:
+      case IntervalKind.rest:
         return "Rest";
-      case IntervalKind.CoolDown:
+      case IntervalKind.coolDown:
         return "Cool Down";
-      case IntervalKind.Done:
+      case IntervalKind.done:
         return "Done";
-      default:
-        return null;
     }
   }
 

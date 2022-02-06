@@ -1,5 +1,6 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,47 +9,45 @@ import 'package:hiit/hiit.dart';
 import 'package:hiit/themed_timerpicker.dart';
 import 'package:hiit/themed_numberpicker.dart';
 
-SharedPreferences preferences;
+late SharedPreferences preferences;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   preferences = await SharedPreferences.getInstance();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(MaterialApp(title: 'HIIT Timer', home: Home()));
+  runApp(const MaterialApp(title: 'HIIT Timer', home: Home()));
 }
 
 class Default {
-  static final bool darkmode = false;
-  static final int warmup = 120;
-  static final int work = 30;
-  static final int rest = 90;
-  static final int cooldown = 120;
-  static final int sets = 8;
-}
-
-ThemeData theme() {
-  return (preferences.getBool("darkmode") ?? Default.darkmode) ? AppTheme.dark() : AppTheme.light();
+  static const bool darkmode = false;
+  static const int warmup = 120;
+  static const int work = 30;
+  static const int rest = 90;
+  static const int cooldown = 120;
+  static const int sets = 8;
 }
 
 class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   HomeState createState() => HomeState();
 }
 
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  HIITTimer timer;
-  AnimationController _controller;
+  late HIITTimer timer;
+  late AnimationController _controller;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   Color timerColor() {
     switch (timer.current.kind) {
-      case IntervalKind.WarmUp:
-      case IntervalKind.CoolDown:
+      case IntervalKind.warmUp:
+      case IntervalKind.coolDown:
         return AppTheme.coolDownColor;
-      case IntervalKind.Work:
+      case IntervalKind.work:
         return AppTheme.workColor;
-      case IntervalKind.Rest:
+      case IntervalKind.rest:
         return AppTheme.restColor;
       default:
         return AppTheme.defaultColor;
@@ -71,7 +70,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       (double value) {
         if (value > _controller.value) _controller.value = 1;
 
-        _controller.animateTo(value, duration: Duration(seconds: 1));
+        _controller.animateTo(value, duration: const Duration(seconds: 1));
         setState(() {});
       },
       warmUpTime: Duration(seconds: preferences.getInt("warmup") ?? Default.warmup),
@@ -84,8 +83,15 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme;
+    if (preferences.getBool("darkmode") ?? Default.darkmode) {
+      theme = AppTheme.dark(context);
+    } else {
+      theme = AppTheme.light(context);
+    }
+
     return Theme(
-      data: theme(),
+      data: theme,
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: timerColor(),
@@ -102,28 +108,28 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               children: [
                 Center(
                   child: Container(
-                    decoration: BoxDecoration(color: theme().primaryColor, shape: BoxShape.circle),
-                    width: MediaQuery.of(context).size.width * 0.85,
-                    height: MediaQuery.of(context).size.width * 0.85,
+                    decoration: BoxDecoration(color: theme.primaryColor, shape: BoxShape.circle),
+                    width: MediaQuery.of(context).size.shortestSide * 0.85,
+                    height: MediaQuery.of(context).size.shortestSide * 0.85,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(timer.repText, style: theme().textTheme.display2),
-                        Text(timer.current.remainingText, style: theme().textTheme.display4),
-                        Text(timer.subtext, style: theme().textTheme.display2),
+                        Text(timer.repText, style: theme.textTheme.headline3),
+                        Text(timer.current.remainingText, style: theme.textTheme.headline1),
+                        Text(timer.subtext, style: theme.textTheme.headline3),
                       ],
                     ),
                   ),
                 ),
                 Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.width * 0.8,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.shortestSide * 0.8,
+                    height: MediaQuery.of(context).size.shortestSide * 0.8,
                     child: CircularProgressIndicator(
                       value: _controller.value,
                       backgroundColor: Color.lerp(
-                        theme().primaryColor,
-                        theme().accentColor,
+                        theme.primaryColor,
+                        theme.colorScheme.secondary,
                         0.25,
                       ),
                     ),
@@ -136,76 +142,83 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
-          shape: StadiumBorder(side: BorderSide(color: theme().primaryColor, width: 3)),
+          foregroundColor: theme.primaryColor,
+          shape: StadiumBorder(side: BorderSide(color: theme.primaryColor, width: 3)),
           tooltip: timer.isRunning ? "Pause" : "Play",
           onPressed: () => setState(timer.playpause),
         ),
         bottomNavigationBar: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: Icon(Icons.settings),
-                tooltip: "Settings",
-                onPressed: () {
-                  scaffoldKey.currentState.openDrawer();
-                  timer.isRunning = false;
-                },
+            shape: const CircularNotchedRectangle(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.125,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.settings),
+                        tooltip: "Settings",
+                        onPressed: () {
+                          scaffoldKey.currentState?.openDrawer();
+                          timer.isRunning = false;
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.replay),
+                        tooltip: "Restart",
+                        onPressed: () => setState(timer.restart),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              IconButton(
-                icon: Icon(Icons.replay),
-                tooltip: "Restart",
-                onPressed: () => setState(timer.restart),
-              ),
-            ],
-          ),
-        ),
+            )),
         drawer: Drawer(
           child: Container(
             decoration: BoxDecoration(
-              color: theme().primaryColor,
-              border: Border(right: BorderSide(color: theme().accentColor, width: 2)),
+              color: theme.primaryColor,
+              border: Border(right: BorderSide(color: theme.colorScheme.secondary, width: 2)),
             ),
             child: ListView(
               children: [
                 Container(
-                  color: theme().accentColor,
-                  padding: EdgeInsets.all(25),
+                  color: theme.colorScheme.secondary,
+                  padding: const EdgeInsets.all(25),
                   child: ListTile(
-                    leading: Icon(Icons.settings, color: theme().primaryColor),
+                    leading: Icon(Icons.settings, color: theme.primaryColor),
                     dense: true,
-                    title: Text('Settings', textScaleFactor: 1.5, style: TextStyle(color: theme().primaryColor)),
+                    title: Text('Settings', textScaleFactor: 1.5, style: TextStyle(color: theme.primaryColor)),
                   ),
                 ),
-                ListTile(
+                const ListTile(
                   leading: Icon(Icons.style),
                   dense: true,
                   title: Text('Theme', textScaleFactor: 1.25),
                 ),
                 RadioListTile(
-                  title: Text("Light Theme"),
+                  title: const Text("Light Theme"),
                   groupValue: false,
                   value: preferences.getBool("darkmode") ?? Default.darkmode,
                   onChanged: (_) => _do(preferences.setBool("darkmode", false)),
                 ),
                 RadioListTile(
-                  title: Text("Dark Theme"),
+                  title: const Text("Dark Theme"),
                   groupValue: true,
                   value: preferences.getBool("darkmode") ?? Default.darkmode,
                   onChanged: (_) => _do(preferences.setBool("darkmode", true)),
                 ),
-                Divider(color: theme().accentColor),
-                ListTile(
+                Divider(color: theme.colorScheme.secondary),
+                const ListTile(
                   leading: Icon(Icons.timer),
                   dense: true,
                   title: Text('Timer', textScaleFactor: 1.25),
                 ),
                 TimerInput(
-                  context: context,
                   title: "Warm-Up Time",
-                  backgroundColor: theme().primaryColor,
-                  accentColor: theme().accentColor,
+                  backgroundColor: theme.primaryColor,
+                  accentColor: theme.colorScheme.secondary,
                   value: Duration(seconds: preferences.getInt("warmup") ?? Default.warmup),
                   onConfirm: (duration) {
                     _do(preferences.setInt("warmup", duration.inSeconds));
@@ -214,10 +227,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   },
                 ),
                 TimerInput(
-                  context: context,
                   title: "Work Time",
-                  backgroundColor: theme().primaryColor,
-                  accentColor: theme().accentColor,
+                  backgroundColor: theme.primaryColor,
+                  accentColor: theme.colorScheme.secondary,
                   value: Duration(seconds: preferences.getInt("work") ?? Default.work),
                   onConfirm: (duration) {
                     _do(preferences.setInt("work", duration.inSeconds));
@@ -226,10 +238,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   },
                 ),
                 TimerInput(
-                  context: context,
                   title: "Rest Time",
-                  backgroundColor: theme().primaryColor,
-                  accentColor: theme().accentColor,
+                  backgroundColor: theme.primaryColor,
+                  accentColor: theme.colorScheme.secondary,
                   value: Duration(seconds: preferences.getInt("rest") ?? Default.rest),
                   onConfirm: (duration) {
                     _do(preferences.setInt("rest", duration.inSeconds));
@@ -238,10 +249,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   },
                 ),
                 TimerInput(
-                  context: context,
                   title: "Cool-Down Time",
-                  backgroundColor: theme().primaryColor,
-                  accentColor: theme().accentColor,
+                  backgroundColor: theme.primaryColor,
+                  accentColor: theme.colorScheme.secondary,
                   value: Duration(seconds: preferences.getInt("cooldown") ?? Default.cooldown),
                   onConfirm: (duration) {
                     _do(preferences.setInt("cooldown", duration.inSeconds));
@@ -250,10 +260,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   },
                 ),
                 NumberInput(
-                  context: context,
                   title: "Number of Sets",
-                  backgroundColor: theme().primaryColor,
-                  accentColor: theme().accentColor,
+                  label: "Sets",
+                  backgroundColor: theme.primaryColor,
+                  accentColor: theme.colorScheme.secondary,
                   value: preferences.getInt("sets") ?? Default.sets,
                   onConfirm: (value) {
                     _do(preferences.setInt("sets", value));
@@ -261,11 +271,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     timer.restart();
                   },
                 ),
-                Divider(color: theme().accentColor),
+                Divider(color: theme.colorScheme.secondary),
                 Center(
-                  child: OutlineButton(
-                    borderSide: BorderSide(color: theme().accentColor, width: 1),
-                    child: Text("Default Settings"),
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(side: BorderSide(color: theme.colorScheme.secondary, width: 1)),
+                    child: const Text("Default Settings"),
                     onPressed: () {
                       _do(preferences.setBool("darkmode", Default.darkmode));
                       _do(preferences.setInt("warmup", Default.warmup));
@@ -273,10 +283,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       _do(preferences.setInt("rest", Default.rest));
                       _do(preferences.setInt("cooldown", Default.cooldown));
                       _do(preferences.setInt("sets", Default.sets));
-                      timer.warmUpTime = Duration(seconds: Default.warmup);
-                      timer.workTime = Duration(seconds: Default.work);
-                      timer.restTime = Duration(seconds: Default.rest);
-                      timer.coolDownTime = Duration(seconds: Default.cooldown);
+                      timer.warmUpTime = const Duration(seconds: Default.warmup);
+                      timer.workTime = const Duration(seconds: Default.work);
+                      timer.restTime = const Duration(seconds: Default.rest);
+                      timer.coolDownTime = const Duration(seconds: Default.cooldown);
                       timer.sets = Default.sets;
                       timer.restart();
                     },

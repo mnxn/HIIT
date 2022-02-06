@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hiit/theme.dart';
 
 class NumberInput extends StatefulWidget {
-  NumberInput({
-    Key key,
-    @required this.context,
-    @required this.title,
-    @required this.onConfirm,
-    @required this.value,
-    @required this.accentColor,
-    @required this.backgroundColor,
+  const NumberInput({
+    Key? key,
+    required this.title,
+    required this.label,
+    required this.onConfirm,
+    required this.value,
+    required this.accentColor,
+    required this.backgroundColor,
   }) : super(key: key);
 
-  final BuildContext context;
   final String title;
+  final String label;
   final void Function(int) onConfirm;
   final int value;
   final Color accentColor;
@@ -31,19 +32,20 @@ class NumberInputState extends State<NumberInput> {
       children: [
         Expanded(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: Text(widget.title, textScaleFactor: 1.15),
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
-          child: OutlineButton(
-            child: Text("${widget.value}", textScaleFactor: 1.1, style: TextStyle(fontFamily: "monospace")),
-            borderSide: BorderSide(color: widget.accentColor, width: 1),
+          padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+          child: OutlinedButton(
+            child: Text("${widget.value}", textScaleFactor: 1.1, style: const TextStyle(fontFamily: "monospace")),
+            style: OutlinedButton.styleFrom(side: BorderSide(color: widget.accentColor, width: 1)),
             onPressed: () => showDialog(
-              context: widget.context,
+              context: context,
               builder: (context) => NumberPicker(
                 title: Text(widget.title, style: TextStyle(color: widget.accentColor)),
+                label: widget.label,
                 backgroundColor: widget.backgroundColor,
                 accentColor: widget.accentColor,
                 initialValue: widget.value,
@@ -58,15 +60,18 @@ class NumberInputState extends State<NumberInput> {
 }
 
 class NumberPicker extends StatefulWidget {
-  NumberPicker({
-    @required this.title,
+  const NumberPicker({
+    Key? key,
+    required this.title,
+    required this.label,
     this.initialValue = 0,
     this.backgroundColor = CupertinoColors.white,
     this.accentColor = CupertinoColors.black,
-    @required this.onConfirm,
-  });
+    required this.onConfirm,
+  }) : super(key: key);
 
   final Widget title;
+  final String label;
   final int initialValue;
   final ValueChanged<int> onConfirm;
   final Color backgroundColor;
@@ -77,10 +82,10 @@ class NumberPicker extends StatefulWidget {
 }
 
 class NumberPickerState extends State<NumberPicker> {
-  int textDirectionFactor;
-  CupertinoLocalizations localizations;
+  late int textDirectionFactor;
+  late CupertinoLocalizations localizations;
 
-  int selectedValue;
+  late int selectedValue;
 
   @override
   void initState() {
@@ -93,7 +98,7 @@ class NumberPickerState extends State<NumberPicker> {
     return Text(
       text,
       textScaleFactor: 0.9,
-      style: TextStyle(fontWeight: FontWeight.w600, color: widget.accentColor),
+      style: TextStyle(color: widget.accentColor, fontWeight: FontWeight.w600),
     );
   }
 
@@ -132,7 +137,7 @@ class NumberPickerState extends State<NumberPicker> {
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Text(
                 value.toString(),
-                style: TextStyle(color: widget.accentColor),
+                style: TextStyle(color: widget.accentColor, fontFamily: defaultFont()),
               ),
             ),
           ),
@@ -152,7 +157,7 @@ class NumberPickerState extends State<NumberPicker> {
               alignment: Alignment.centerRight,
               width: 330 / 4,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              child: buildLabel("Sets"),
+              child: buildLabel(widget.label),
             ),
           ),
         ),
@@ -165,16 +170,19 @@ class NumberPickerState extends State<NumberPicker> {
     return AlertDialog(
         title: widget.title,
         backgroundColor: widget.backgroundColor,
-        shape: Border.fromBorderSide(BorderSide(color: widget.accentColor, width: 2)),
-        contentPadding: EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: widget.accentColor, width: 1),
+          borderRadius: BorderRadius.circular(7),
+        ),
+        contentPadding: const EdgeInsets.all(0),
         actions: [
-          FlatButton(
+          TextButton(
             child: Text("Cancel", style: TextStyle(color: widget.accentColor)),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          FlatButton(
+          TextButton(
             child: Text("Confirm", style: TextStyle(color: widget.accentColor)),
             onPressed: () {
               Navigator.pop(context);
@@ -182,7 +190,7 @@ class NumberPickerState extends State<NumberPicker> {
             },
           ),
         ],
-        content: Container(
+        content: SizedBox(
           height: MediaQuery.of(context).size.height / 4,
           child: Row(
             children: [
