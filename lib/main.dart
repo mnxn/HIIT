@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hiit/single_route_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:url_strategy/url_strategy.dart';
 
 import 'package:hiit/hiit.dart';
 import 'package:hiit/theme.dart' as theme;
@@ -10,17 +13,18 @@ import 'package:hiit/themed_numberpicker.dart';
 late SharedPreferences preferences;
 
 void main() async {
+  setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
   preferences = await SharedPreferences.getInstance();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(MaterialApp(
+  runSingleRouteApp(
     title: 'HIIT Timer',
-    home: const Home(),
     theme: theme.light(),
     darkTheme: theme.dark(),
     themeMode: ThemeMode.system,
-  ));
+    home: const Home(),
+  );
 }
 
 class Default {
