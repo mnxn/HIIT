@@ -9,16 +9,12 @@ class NumberInput extends StatefulWidget {
     required this.label,
     required this.onConfirm,
     required this.value,
-    required this.accentColor,
-    required this.backgroundColor,
   }) : super(key: key);
 
   final String title;
   final String label;
   final void Function(int) onConfirm;
   final int value;
-  final Color accentColor;
-  final Color backgroundColor;
 
   @override
   NumberInputState createState() => NumberInputState();
@@ -27,6 +23,7 @@ class NumberInput extends StatefulWidget {
 class NumberInputState extends State<NumberInput> {
   @override
   Widget build(BuildContext context) {
+    var c = context;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -46,17 +43,21 @@ class NumberInputState extends State<NumberInput> {
                 textScaleFactor: 1.1,
                 style: const TextStyle(fontFamily: "monospace"),
               ),
-              style: OutlinedButton.styleFrom(side: BorderSide(color: widget.accentColor, width: 1)),
+              style:
+                  OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
               onPressed: () => showDialog(
                 context: context,
-                builder: (context) => NumberPicker(
-                  title: Text(widget.title, style: TextStyle(color: widget.accentColor)),
-                  label: widget.label,
-                  backgroundColor: widget.backgroundColor,
-                  accentColor: widget.accentColor,
-                  initialValue: widget.value,
-                  onConfirm: widget.onConfirm,
-                ),
+                builder: (context) {
+                  return Theme(
+                    data: Theme.of(c),
+                    child: NumberPicker(
+                      title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                      label: widget.label,
+                      initialValue: widget.value,
+                      onConfirm: widget.onConfirm,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -72,8 +73,6 @@ class NumberPicker extends StatefulWidget {
     required this.title,
     required this.label,
     this.initialValue = 0,
-    this.backgroundColor = CupertinoColors.white,
-    this.accentColor = CupertinoColors.black,
     required this.onConfirm,
   }) : super(key: key);
 
@@ -81,8 +80,6 @@ class NumberPicker extends StatefulWidget {
   final String label;
   final int initialValue;
   final ValueChanged<int> onConfirm;
-  final Color backgroundColor;
-  final Color accentColor;
 
   @override
   State<StatefulWidget> createState() => NumberPickerState();
@@ -104,8 +101,11 @@ class NumberPickerState extends State<NumberPicker> {
   Widget buildLabel(String text) {
     return Text(
       text,
-      textScaleFactor: 0.9,
-      style: TextStyle(color: widget.accentColor, fontWeight: FontWeight.w600),
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.secondary,
+        fontSize: 17.0,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 
@@ -118,8 +118,7 @@ class NumberPickerState extends State<NumberPicker> {
   }
 
   Widget buildValuePicker() {
-    double offAxisFraction;
-    offAxisFraction = -0.5 * textDirectionFactor;
+    double offAxisFraction = -0.5 * textDirectionFactor;
 
     return CupertinoPicker(
       scrollController: FixedExtentScrollController(
@@ -127,7 +126,6 @@ class NumberPickerState extends State<NumberPicker> {
       ),
       offAxisFraction: offAxisFraction,
       itemExtent: 32,
-      backgroundColor: widget.backgroundColor,
       squeeze: 1.25,
       onSelectedItemChanged: (int index) {
         setState(() => selectedValue = index);
@@ -136,15 +134,15 @@ class NumberPickerState extends State<NumberPicker> {
         return Semantics(
           excludeSemantics: true,
           child: Container(
-            alignment: Alignment.center,
+            alignment: Alignment.centerRight,
             padding:
                 textDirectionFactor == 1 ? const EdgeInsets.only(right: 330 / 4) : const EdgeInsets.only(left: 330 / 4),
             child: Container(
-              alignment: Alignment.center,
+              alignment: Alignment.centerRight,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Text(
                 value.toString(),
-                style: TextStyle(color: widget.accentColor, fontFamily: defaultFont()),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontFamily: defaultFont()),
               ),
             ),
           ),
@@ -159,9 +157,9 @@ class NumberPickerState extends State<NumberPicker> {
         buildValuePicker(),
         IgnorePointer(
           child: Container(
-            alignment: Alignment.center,
+            alignment: Alignment.centerRight,
             child: Container(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.center,
               width: 330 / 4,
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: buildLabel(widget.label),
@@ -175,31 +173,33 @@ class NumberPickerState extends State<NumberPicker> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: widget.title,
-        backgroundColor: widget.backgroundColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: widget.accentColor, width: 1),
-          borderRadius: BorderRadius.circular(7),
+      title: widget.title,
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1),
+        borderRadius: BorderRadius.circular(7),
+      ),
+      contentPadding: const EdgeInsets.only(left: 50, right: 50),
+      actions: [
+        TextButton(
+          child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        contentPadding: const EdgeInsets.only(left: 50, right: 50),
-        actions: [
-          TextButton(
-            child: Text("Cancel", style: TextStyle(color: widget.accentColor)),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          TextButton(
-            child: Text("Confirm", style: TextStyle(color: widget.accentColor)),
-            onPressed: () {
-              Navigator.pop(context);
-              widget.onConfirm(selectedValue);
-            },
-          ),
-        ],
-        content: SizedBox(
-          height: MediaQuery.of(context).size.height / 4,
-          child: buildValueColumn(),
-        ));
+        TextButton(
+          child: Text("Confirm", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+          onPressed: () {
+            Navigator.pop(context);
+            widget.onConfirm(selectedValue);
+          },
+        ),
+      ],
+      content: SizedBox(
+        width: MediaQuery.of(context).size.shortestSide * 0.2,
+        height: MediaQuery.of(context).size.shortestSide * 0.6,
+        child: buildValueColumn(),
+      ),
+    );
   }
 }

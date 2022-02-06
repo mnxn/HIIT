@@ -187,19 +187,15 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: ListTile(
                   leading: Icon(Icons.settings, color: Theme.of(context).primaryColor),
                   dense: true,
-                  title:
-                      Text('Settings', textScaleFactor: 1.5, style: TextStyle(color: Theme.of(context).primaryColor)),
+                  title: Text(
+                    'Settings',
+                    textScaleFactor: 1.5,
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
                 ),
-              ),
-              const ListTile(
-                leading: Icon(Icons.timer),
-                dense: true,
-                title: Text('Timer', textScaleFactor: 1.25),
               ),
               TimerInput(
                 title: "Warm-Up Time",
-                backgroundColor: Theme.of(context).primaryColor,
-                accentColor: Theme.of(context).colorScheme.secondary,
                 value: Duration(seconds: preferences.getInt("warmup") ?? Default.warmup),
                 onConfirm: (duration) {
                   _do(preferences.setInt("warmup", duration.inSeconds));
@@ -209,8 +205,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Work Time",
-                backgroundColor: Theme.of(context).primaryColor,
-                accentColor: Theme.of(context).colorScheme.secondary,
                 value: Duration(seconds: preferences.getInt("work") ?? Default.work),
                 onConfirm: (duration) {
                   _do(preferences.setInt("work", duration.inSeconds));
@@ -220,8 +214,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Rest Time",
-                backgroundColor: Theme.of(context).primaryColor,
-                accentColor: Theme.of(context).colorScheme.secondary,
                 value: Duration(seconds: preferences.getInt("rest") ?? Default.rest),
                 onConfirm: (duration) {
                   _do(preferences.setInt("rest", duration.inSeconds));
@@ -231,8 +223,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Cool-Down Time",
-                backgroundColor: Theme.of(context).primaryColor,
-                accentColor: Theme.of(context).colorScheme.secondary,
                 value: Duration(seconds: preferences.getInt("cooldown") ?? Default.cooldown),
                 onConfirm: (duration) {
                   _do(preferences.setInt("cooldown", duration.inSeconds));
@@ -242,9 +232,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               NumberInput(
                 title: "Number of Sets",
-                label: "Sets",
-                backgroundColor: Theme.of(context).primaryColor,
-                accentColor: Theme.of(context).colorScheme.secondary,
+                label: "sets",
                 value: preferences.getInt("sets") ?? Default.sets,
                 onConfirm: (value) {
                   _do(preferences.setInt("sets", value));
