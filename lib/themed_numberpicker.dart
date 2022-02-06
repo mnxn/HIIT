@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hiit/theme.dart';
 
-String padCenter(int value, int length) {
-  String source = value.toString();
-  int spaces = length - source.length;
-  int padLeft = ((spaces / 2) as int) + source.length;
-  return source.padLeft(padLeft).padRight(length);
+String padCenter(int value) {
+  String str = value.toString();
+  switch (str.length) {
+    case 1:
+      return "  $str  ";
+    case 2:
+      return " $str  ";
+    default:
+      return str;
+  }
 }
 
 class NumberInput extends StatefulWidget {
@@ -47,7 +52,7 @@ class NumberInputState extends State<NumberInput> {
           padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
           child: OutlinedButton(
             child: Text(
-              padCenter(widget.value, 5),
+              padCenter(widget.value),
               textScaleFactor: 1.1,
               style: const TextStyle(fontFamily: "monospace"),
             ),
