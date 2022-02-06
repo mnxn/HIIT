@@ -84,7 +84,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       workTime: Duration(seconds: preferences.getInt("work") ?? Default.work),
       restTime: Duration(seconds: preferences.getInt("rest") ?? Default.rest),
       coolDownTime: Duration(seconds: preferences.getInt("cooldown") ?? Default.cooldown),
-      sets: preferences.getInt("sets") ?? 8,
+      sets: preferences.getInt("sets") ?? Default.sets,
     );
   }
 
