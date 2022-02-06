@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:wakelock/wakelock.dart';
+
 enum IntervalKind { setup, warmUp, work, rest, coolDown, done }
 
 class HIITInterval {
@@ -93,6 +95,7 @@ class HIITTimer {
 
   void playpause() {
     if (current.kind != IntervalKind.done) isRunning = !isRunning;
+    Wakelock.toggle(enable: isRunning);
   }
 
   void restart() {
