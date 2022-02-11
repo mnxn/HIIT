@@ -108,10 +108,22 @@ class HIITTimer {
 
   HIITInterval get current => intervals.first;
 
-  String get titleText {
+  Duration get total {
+    return warmUpTime + (workTime + restTime) * sets + coolDownTime;
+  }
+
+  String get elapsedText {
     var h = pad(elapsed.inHours);
     var m = pad(elapsed.inMinutes);
     var s = pad(elapsed.inSeconds);
+    return "$h:$m:$s";
+  }
+
+  String get remainingText {
+    var remaining = total - elapsed;
+    var h = pad(remaining.inHours);
+    var m = pad(remaining.inMinutes);
+    var s = pad(remaining.inSeconds);
     return "$h:$m:$s";
   }
 
@@ -137,10 +149,6 @@ class HIITTimer {
 
 String pad(int n) {
   return n.remainder(60).toString().padLeft(2, "0");
-}
-
-String padMilli(int n) {
-  return n.remainder(1000).toString().padLeft(4, "0");
 }
 
 class HIITDefault {

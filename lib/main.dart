@@ -35,9 +35,11 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late HIITTimer timer;
-  late AnimationController _controller;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  late AnimationController controller;
+
+  late HIITTimer timer;
+  late bool useElapsedTitle;
 
   Color timerColor() {
     switch (timer.current.kind) {
@@ -62,14 +64,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, value: 1);
-    _controller.addListener(() => setState(() {}));
+    controller = AnimationController(vsync: this, value: 1);
+    controller.addListener(() => setState(() {}));
 
     timer = HIITTimer(
       (double value) {
-        if (value > _controller.value) _controller.value = 1;
+        if (value > controller.value) controller.value = 1;
 
-        _controller.animateTo(value, duration: const Duration(seconds: 1));
+        controller.animateTo(value, duration: const Duration(seconds: 1));
         setState(() {});
       },
       warmUpTime: Duration(seconds: preferences.getInt("warmup") ?? HIITDefault.warmup),
@@ -78,6 +80,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       coolDownTime: Duration(seconds: preferences.getInt("cooldown") ?? HIITDefault.cooldown),
       sets: preferences.getInt("sets") ?? HIITDefault.sets,
     );
+
+    useElapsedTitle = preferences.getBool("elapsed") ?? true;
   }
 
   @override
@@ -86,7 +90,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       key: scaffoldKey,
       backgroundColor: timerColor(),
       appBar: AppBar(
-        title: Text(timer.titleText),
+        title: InkWell(
+          child: Text(useElapsedTitle ? timer.elapsedText : timer.remainingText),
+          onTap: () {
+            _do(preferences.setBool("elapsed", !useElapsedTitle));
+            useElapsedTitle = !useElapsedTitle;
+          },
+        ),
         centerTitle: true,
         leading: Container(), // hide drawer hamburger menu
       ),
@@ -116,7 +126,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   width: MediaQuery.of(context).size.shortestSide * 0.8,
                   height: MediaQuery.of(context).size.shortestSide * 0.8,
                   child: CircularProgressIndicator(
-                    value: _controller.value,
+                    value: controller.value,
                     backgroundColor: Color.lerp(
                       Theme.of(context).primaryColor,
                       Theme.of(context).colorScheme.secondary,
