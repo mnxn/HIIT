@@ -142,3 +142,11 @@ String pad(int n) {
 String padMilli(int n) {
   return n.remainder(1000).toString().padLeft(4, "0");
 }
+
+class HIITDefault {
+  static const int warmup = 120;
+  static const int work = 30;
+  static const int rest = 90;
+  static const int cooldown = 120;
+  static const int sets = 8;
+}

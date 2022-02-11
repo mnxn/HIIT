@@ -27,14 +27,6 @@ void main() async {
   );
 }
 
-class Default {
-  static const int warmup = 120;
-  static const int work = 30;
-  static const int rest = 90;
-  static const int cooldown = 120;
-  static const int sets = 8;
-}
-
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -80,11 +72,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         _controller.animateTo(value, duration: const Duration(seconds: 1));
         setState(() {});
       },
-      warmUpTime: Duration(seconds: preferences.getInt("warmup") ?? Default.warmup),
-      workTime: Duration(seconds: preferences.getInt("work") ?? Default.work),
-      restTime: Duration(seconds: preferences.getInt("rest") ?? Default.rest),
-      coolDownTime: Duration(seconds: preferences.getInt("cooldown") ?? Default.cooldown),
-      sets: preferences.getInt("sets") ?? Default.sets,
+      warmUpTime: Duration(seconds: preferences.getInt("warmup") ?? HIITDefault.warmup),
+      workTime: Duration(seconds: preferences.getInt("work") ?? HIITDefault.work),
+      restTime: Duration(seconds: preferences.getInt("rest") ?? HIITDefault.rest),
+      coolDownTime: Duration(seconds: preferences.getInt("cooldown") ?? HIITDefault.cooldown),
+      sets: preferences.getInt("sets") ?? HIITDefault.sets,
     );
   }
 
@@ -197,7 +189,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Warm-Up Time",
-                value: Duration(seconds: preferences.getInt("warmup") ?? Default.warmup),
+                value: Duration(seconds: preferences.getInt("warmup") ?? HIITDefault.warmup),
                 onConfirm: (duration) {
                   _do(preferences.setInt("warmup", duration.inSeconds));
                   timer.warmUpTime = duration;
@@ -206,7 +198,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Work Time",
-                value: Duration(seconds: preferences.getInt("work") ?? Default.work),
+                value: Duration(seconds: preferences.getInt("work") ?? HIITDefault.work),
                 onConfirm: (duration) {
                   _do(preferences.setInt("work", duration.inSeconds));
                   timer.workTime = duration;
@@ -215,7 +207,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Rest Time",
-                value: Duration(seconds: preferences.getInt("rest") ?? Default.rest),
+                value: Duration(seconds: preferences.getInt("rest") ?? HIITDefault.rest),
                 onConfirm: (duration) {
                   _do(preferences.setInt("rest", duration.inSeconds));
                   timer.restTime = duration;
@@ -224,7 +216,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
               TimerInput(
                 title: "Cool-Down Time",
-                value: Duration(seconds: preferences.getInt("cooldown") ?? Default.cooldown),
+                value: Duration(seconds: preferences.getInt("cooldown") ?? HIITDefault.cooldown),
                 onConfirm: (duration) {
                   _do(preferences.setInt("cooldown", duration.inSeconds));
                   timer.coolDownTime = duration;
@@ -235,7 +227,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 title: "Number of Sets",
                 singleLabel: "set",
                 pluralLabel: "sets",
-                value: preferences.getInt("sets") ?? Default.sets,
+                value: preferences.getInt("sets") ?? HIITDefault.sets,
                 onConfirm: (value) {
                   _do(preferences.setInt("sets", value));
                   timer.sets = value;
@@ -249,16 +241,16 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
                   child: const Text("Default Settings"),
                   onPressed: () {
-                    _do(preferences.setInt("warmup", Default.warmup));
-                    _do(preferences.setInt("work", Default.work));
-                    _do(preferences.setInt("rest", Default.rest));
-                    _do(preferences.setInt("cooldown", Default.cooldown));
-                    _do(preferences.setInt("sets", Default.sets));
-                    timer.warmUpTime = const Duration(seconds: Default.warmup);
-                    timer.workTime = const Duration(seconds: Default.work);
-                    timer.restTime = const Duration(seconds: Default.rest);
-                    timer.coolDownTime = const Duration(seconds: Default.cooldown);
-                    timer.sets = Default.sets;
+                    _do(preferences.setInt("warmup", HIITDefault.warmup));
+                    _do(preferences.setInt("work", HIITDefault.work));
+                    _do(preferences.setInt("rest", HIITDefault.rest));
+                    _do(preferences.setInt("cooldown", HIITDefault.cooldown));
+                    _do(preferences.setInt("sets", HIITDefault.sets));
+                    timer.warmUpTime = const Duration(seconds: HIITDefault.warmup);
+                    timer.workTime = const Duration(seconds: HIITDefault.work);
+                    timer.restTime = const Duration(seconds: HIITDefault.rest);
+                    timer.coolDownTime = const Duration(seconds: HIITDefault.cooldown);
+                    timer.sets = HIITDefault.sets;
                     timer.restart();
                   },
                 ),
