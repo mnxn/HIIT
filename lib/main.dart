@@ -96,6 +96,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             _do(preferences.setBool("elapsed", !useElapsedTitle));
             useElapsedTitle = !useElapsedTitle;
           },
+          borderRadius: BorderRadius.circular(7),
         ),
         centerTitle: true,
         leading: Container(), // hide drawer hamburger menu
