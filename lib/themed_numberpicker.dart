@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hiit/theme.dart';
@@ -43,7 +45,7 @@ class NumberInputState extends State<NumberInput> {
               child: Text(
                 widget.value.toString(),
                 textScaleFactor: 1.1,
-                style: const TextStyle(fontFamily: "monospace"),
+                style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
               ),
               style:
                   OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hiit/single_route_app.dart';
@@ -115,7 +117,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(timer.repText, style: Theme.of(context).textTheme.headline3),
-                      Text(timer.current.remainingText, style: Theme.of(context).textTheme.headline1),
+                      Text(timer.current.remainingText,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1
+                              ?.copyWith(fontFeatures: [FontFeature.tabularFigures()])),
                       Text(timer.subtext, style: Theme.of(context).textTheme.headline3),
                     ],
                   ),
