@@ -42,11 +42,6 @@ class NumberInputState extends State<NumberInput> {
           child: SizedBox(
             width: 80,
             child: OutlinedButton(
-              child: Text(
-                widget.value.toString(),
-                textScaleFactor: 1.1,
-                style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
-              ),
               style:
                   OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
               onPressed: () => showDialog(
@@ -63,6 +58,11 @@ class NumberInputState extends State<NumberInput> {
                     ),
                   );
                 },
+              ),
+              child: Text(
+                widget.value.toString(),
+                textScaleFactor: 1.1,
+                style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
               ),
             ),
           ),

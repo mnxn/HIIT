@@ -116,13 +116,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(timer.repText, style: Theme.of(context).textTheme.headline3),
+                      Text(timer.repText, style: Theme.of(context).textTheme.displaySmall),
                       Text(timer.current.remainingText,
                           style: Theme.of(context)
                               .textTheme
-                              .headline1
-                              ?.copyWith(fontFeatures: [FontFeature.tabularFigures()])),
-                      Text(timer.subtext, style: Theme.of(context).textTheme.headline3),
+                              .displayLarge
+                              ?.copyWith(fontFeatures: [const FontFeature.tabularFigures()])),
+                      Text(timer.subtext, style: Theme.of(context).textTheme.displaySmall),
                     ],
                   ),
                 ),
@@ -147,11 +147,11 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
         foregroundColor: Theme.of(context).primaryColor,
         shape: StadiumBorder(side: BorderSide(color: Theme.of(context).primaryColor, width: 3)),
         tooltip: timer.isRunning ? "Pause" : "Play",
         onPressed: () => setState(timer.playpause),
+        child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
       ),
       bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),

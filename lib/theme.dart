@@ -21,7 +21,7 @@ ThemeData dark() {
     fontFamily: defaultFont(),
     brightness: Brightness.dark,
     primaryColor: Colors.black,
-    bottomAppBarColor: Colors.black,
+    bottomAppBarTheme: const BottomAppBarTheme(color: Colors.black),
     dialogBackgroundColor: Colors.black,
     iconTheme: const IconThemeData(color: CupertinoColors.extraLightBackgroundGray),
     appBarTheme: const AppBarTheme(
@@ -38,9 +38,9 @@ ThemeData dark() {
       ),
     ),
     textTheme: TextTheme(
-      headline4: defaultTheme.headline4?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 30),
-      headline3: defaultTheme.headline3?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 40),
-      headline1: defaultTheme.headline1?.copyWith(color: CupertinoColors.extraLightBackgroundGray, fontSize: 100),
+      headlineMedium: defaultTheme.headlineMedium?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 30),
+      displaySmall: defaultTheme.displaySmall?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 40),
+      displayLarge: defaultTheme.displayLarge?.copyWith(color: CupertinoColors.extraLightBackgroundGray, fontSize: 100),
     ),
     colorScheme: ColorScheme.fromSwatch()
         .copyWith(secondary: CupertinoColors.extraLightBackgroundGray, brightness: Brightness.dark),
@@ -53,7 +53,7 @@ ThemeData light() {
     fontFamily: defaultFont(),
     brightness: Brightness.light,
     primaryColor: CupertinoColors.extraLightBackgroundGray,
-    bottomAppBarColor: CupertinoColors.extraLightBackgroundGray,
+    bottomAppBarTheme: const BottomAppBarTheme(color: CupertinoColors.extraLightBackgroundGray),
     dialogBackgroundColor: CupertinoColors.extraLightBackgroundGray,
     iconTheme: const IconThemeData(color: Colors.black),
     appBarTheme: const AppBarTheme(
@@ -70,9 +70,9 @@ ThemeData light() {
       ),
     ),
     textTheme: TextTheme(
-      headline4: defaultTheme.headline4?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 30),
-      headline3: defaultTheme.headline3?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 40),
-      headline1: defaultTheme.headline1?.copyWith(color: Colors.black, fontSize: 100),
+      headlineMedium: defaultTheme.headlineMedium?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 30),
+      displaySmall: defaultTheme.displaySmall?.copyWith(color: CupertinoColors.inactiveGray, fontSize: 40),
+      displayLarge: defaultTheme.displayLarge?.copyWith(color: Colors.black, fontSize: 100),
     ),
     colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.black),
   );

@@ -43,11 +43,6 @@ class TimerInputState extends State<TimerInput> {
             child: SizedBox(
               width: 80,
               child: OutlinedButton(
-                child: Text(
-                  "${pad(widget.value.inMinutes)}:${pad(widget.value.inSeconds)}",
-                  textScaleFactor: 1.1,
-                  style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
-                ),
                 style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
                 onPressed: () => showDialog(
@@ -57,6 +52,11 @@ class TimerInputState extends State<TimerInput> {
                     initialTimerDuration: widget.value,
                     onConfirm: widget.onConfirm,
                   ),
+                ),
+                child: Text(
+                  "${pad(widget.value.inMinutes)}:${pad(widget.value.inSeconds)}",
+                  textScaleFactor: 1.1,
+                  style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
                 ),
               ),
             ),
