@@ -57,12 +57,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  void _do<T>(Future<T> future) {
-    setState(() {
-      future.then((_) {});
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -94,8 +88,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         title: GestureDetector(
           child: Text(useElapsedTitle ? timer.elapsedText : timer.remainingText),
-          onTap: () {
-            _do(preferences.setBool("elapsed", !useElapsedTitle));
+          onTap: () async {
+            await preferences.setBool("elapsed", !useElapsedTitle);
             useElapsedTitle = !useElapsedTitle;
           },
         ),
@@ -206,8 +200,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               TimerInput(
                 title: "Warm-Up Time",
                 value: Duration(seconds: preferences.getInt("warmup") ?? HIITDefault.warmup),
-                onConfirm: (duration) {
-                  _do(preferences.setInt("warmup", duration.inSeconds));
+                onConfirm: (duration) async {
+                  await preferences.setInt("warmup", duration.inSeconds);
                   timer.warmUpTime = duration;
                   timer.restart();
                 },
@@ -215,8 +209,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               TimerInput(
                 title: "Work Time",
                 value: Duration(seconds: preferences.getInt("work") ?? HIITDefault.work),
-                onConfirm: (duration) {
-                  _do(preferences.setInt("work", duration.inSeconds));
+                onConfirm: (duration) async {
+                  await preferences.setInt("work", duration.inSeconds);
                   timer.workTime = duration;
                   timer.restart();
                 },
@@ -224,8 +218,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               TimerInput(
                 title: "Rest Time",
                 value: Duration(seconds: preferences.getInt("rest") ?? HIITDefault.rest),
-                onConfirm: (duration) {
-                  _do(preferences.setInt("rest", duration.inSeconds));
+                onConfirm: (duration) async {
+                  await preferences.setInt("rest", duration.inSeconds);
                   timer.restTime = duration;
                   timer.restart();
                 },
@@ -233,8 +227,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               TimerInput(
                 title: "Cool-Down Time",
                 value: Duration(seconds: preferences.getInt("cooldown") ?? HIITDefault.cooldown),
-                onConfirm: (duration) {
-                  _do(preferences.setInt("cooldown", duration.inSeconds));
+                onConfirm: (duration) async {
+                  await preferences.setInt("cooldown", duration.inSeconds);
                   timer.coolDownTime = duration;
                   timer.restart();
                 },
@@ -244,8 +238,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 singleLabel: "set",
                 pluralLabel: "sets",
                 value: preferences.getInt("sets") ?? HIITDefault.sets,
-                onConfirm: (value) {
-                  _do(preferences.setInt("sets", value));
+                onConfirm: (value) async {
+                  await preferences.setInt("sets", value);
                   timer.sets = value;
                   timer.restart();
                 },
@@ -256,12 +250,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   style: OutlinedButton.styleFrom(
                       side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
                   child: const Text("Default Settings"),
-                  onPressed: () {
-                    _do(preferences.setInt("warmup", HIITDefault.warmup));
-                    _do(preferences.setInt("work", HIITDefault.work));
-                    _do(preferences.setInt("rest", HIITDefault.rest));
-                    _do(preferences.setInt("cooldown", HIITDefault.cooldown));
-                    _do(preferences.setInt("sets", HIITDefault.sets));
+                  onPressed: () async {
+                    await preferences.setInt("warmup", HIITDefault.warmup);
+                    await preferences.setInt("work", HIITDefault.work);
+                    await preferences.setInt("rest", HIITDefault.rest);
+                    await preferences.setInt("cooldown", HIITDefault.cooldown);
+                    await preferences.setInt("sets", HIITDefault.sets);
                     timer.warmUpTime = const Duration(seconds: HIITDefault.warmup);
                     timer.workTime = const Duration(seconds: HIITDefault.work);
                     timer.restTime = const Duration(seconds: HIITDefault.rest);
