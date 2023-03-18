@@ -92,6 +92,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
             style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
           ),
           onTap: () async {
+            HapticFeedback.lightImpact();
             await preferences.setBool("elapsed", !useElapsedTitle);
             setState(() {
               useElapsedTitle = !useElapsedTitle;
@@ -149,7 +150,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         foregroundColor: Theme.of(context).primaryColor,
         shape: StadiumBorder(side: BorderSide(color: Theme.of(context).primaryColor, width: 3)),
         tooltip: timer.isRunning ? "Pause" : "Play",
-        onPressed: () => setState(timer.playpause),
+        onPressed: () {
+          HapticFeedback.mediumImpact();
+          setState(timer.playpause);
+        },
         child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -166,6 +170,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       icon: const Icon(Icons.settings),
                       tooltip: "Settings",
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         scaffoldKey.currentState?.openDrawer();
                         timer.isRunning = false;
                       },
@@ -173,7 +178,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     IconButton(
                       icon: const Icon(Icons.replay),
                       tooltip: "Restart",
-                      onPressed: () => setState(timer.restart),
+                      onPressed: () {
+                        HapticFeedback.heavyImpact();
+                        setState(timer.restart);
+                      },
                     ),
                   ],
                 ),
@@ -256,6 +264,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
                   child: const Text("Default Settings"),
                   onPressed: () async {
+                    HapticFeedback.heavyImpact();
                     await preferences.setInt("warmup", HIITDefault.warmup);
                     await preferences.setInt("work", HIITDefault.work);
                     await preferences.setInt("rest", HIITDefault.rest);

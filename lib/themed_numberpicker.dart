@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:hiit/theme.dart';
 
 class NumberInput extends StatefulWidget {
@@ -44,21 +45,24 @@ class NumberInputState extends State<NumberInput> {
             child: OutlinedButton(
               style:
                   OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) {
-                  return Theme(
-                    data: Theme.of(c),
-                    child: NumberPicker(
-                      title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-                      singleLabel: widget.singleLabel,
-                      pluralLabel: widget.pluralLabel,
-                      initialValue: widget.value,
-                      onConfirm: widget.onConfirm,
-                    ),
-                  );
-                },
-              ),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Theme(
+                      data: Theme.of(c),
+                      child: NumberPicker(
+                        title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                        singleLabel: widget.singleLabel,
+                        pluralLabel: widget.pluralLabel,
+                        initialValue: widget.value,
+                        onConfirm: widget.onConfirm,
+                      ),
+                    );
+                  },
+                );
+              },
               child: Text(
                 widget.value.toString(),
                 textScaleFactor: 1.1,
@@ -186,12 +190,14 @@ class NumberPickerState extends State<NumberPicker> {
         TextButton(
           child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           onPressed: () {
+            HapticFeedback.lightImpact();
             Navigator.pop(context);
           },
         ),
         TextButton(
           child: Text("Confirm", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           onPressed: () {
+            HapticFeedback.lightImpact();
             Navigator.pop(context);
             widget.onConfirm(selectedValue);
           },

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:hiit/theme.dart';
+import 'package:flutter/services.dart';
 
 String pad(int n) {
   return n.remainder(60).toString().padLeft(2, "0");
@@ -45,14 +45,17 @@ class TimerInputState extends State<TimerInput> {
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) => ThemedTimerPicker(
-                    title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-                    initialTimerDuration: widget.value,
-                    onConfirm: widget.onConfirm,
-                  ),
-                ),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  showDialog(
+                    context: context,
+                    builder: (context) => ThemedTimerPicker(
+                      title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                      initialTimerDuration: widget.value,
+                      onConfirm: widget.onConfirm,
+                    ),
+                  );
+                },
                 child: Text(
                   "${pad(widget.value.inMinutes)}:${pad(widget.value.inSeconds)}",
                   textScaleFactor: 1.1,
@@ -106,12 +109,14 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
         TextButton(
           child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           onPressed: () {
+            HapticFeedback.lightImpact();
             Navigator.pop(context);
           },
         ),
         TextButton(
           child: Text("Confirm", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
           onPressed: () {
+            HapticFeedback.lightImpact();
             Navigator.pop(context);
             widget.onConfirm(currentDuration);
           },
