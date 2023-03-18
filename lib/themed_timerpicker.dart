@@ -123,8 +123,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
         child: CupertinoTheme(
             data: CupertinoThemeData(
               textTheme: CupertinoTextThemeData(
-                pickerTextStyle:
-                    CupertinoTheme.of(context).textTheme.pickerTextStyle.copyWith(fontFamily: defaultFont()),
+                pickerTextStyle: CupertinoTheme.of(context).textTheme.pickerTextStyle,
               ),
             ),
             child: CupertinoTimerPicker(

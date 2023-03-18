@@ -137,7 +137,7 @@ class NumberPickerState extends State<NumberPicker> {
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Text(
                 value.toString(),
-                style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontFamily: defaultFont()),
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
           ),

@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-// See https://github.com/flutter/flutter/issues/93140
-String? defaultFont() {
-  if (ThemeData().platform == TargetPlatform.iOS) {
-    return '-apple-system, BlinkMacSystemFont';
-  } else {
-    return null;
-  }
-}
-
 const workColor = Color.fromRGBO(231, 72, 86, 1);
 const restColor = Color.fromRGBO(0, 204, 106, 1);
 const coolDownColor = Color.fromRGBO(99, 108, 122, 1);
@@ -18,7 +9,6 @@ const defaultColor = Color.fromRGBO(45, 51, 59, 1);
 ThemeData dark() {
   final TextTheme defaultTheme = Typography().black;
   return ThemeData(
-    fontFamily: defaultFont(),
     brightness: Brightness.dark,
     primaryColor: Colors.black,
     bottomAppBarTheme: const BottomAppBarTheme(color: Colors.black),
@@ -50,7 +40,6 @@ ThemeData dark() {
 ThemeData light() {
   final TextTheme defaultTheme = Typography().white;
   return ThemeData(
-    fontFamily: defaultFont(),
     brightness: Brightness.light,
     primaryColor: CupertinoColors.extraLightBackgroundGray,
     bottomAppBarTheme: const BottomAppBarTheme(color: CupertinoColors.extraLightBackgroundGray),
