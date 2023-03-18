@@ -13,16 +13,18 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
+          channel: stable
           cache: true
       - run: flutter pub get
       - run: flutter build ios --release --no-codesign
 
-      - run: |
+      - name: Archive
+        run: |
           mkdir Payload
           mv build/ios/iphoneos/Runner.app Payload/Runner.app
           zip -r HIIT.ipa Payload
 
-      - uses: softprops/action-gh-release@v1
+      - uses: actions/upload-artifact@v3
         with:
-          files: HIIT.ipa
+          name: HIIT.ipa
+          path: HIIT.ipa
