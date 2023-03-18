@@ -87,7 +87,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       backgroundColor: timerColor(),
       appBar: AppBar(
         title: GestureDetector(
-          child: Text(useElapsedTitle ? timer.elapsedText : timer.remainingText),
+          child: Text(
+            useElapsedTitle ? timer.elapsedText : timer.remainingText,
+            style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+          ),
           onTap: () async {
             await preferences.setBool("elapsed", !useElapsedTitle);
             setState(() {
