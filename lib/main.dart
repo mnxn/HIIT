@@ -151,7 +151,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         shape: StadiumBorder(side: BorderSide(color: Theme.of(context).primaryColor, width: 3)),
         tooltip: timer.isRunning ? "Pause" : "Play",
         onPressed: () {
-          HapticFeedback.mediumImpact();
+          HapticFeedback.lightImpact();
           setState(timer.playpause);
         },
         child: Icon(timer.isRunning ? Icons.pause : Icons.play_arrow),
@@ -170,7 +170,6 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       icon: const Icon(Icons.settings),
                       tooltip: "Settings",
                       onPressed: () {
-                        HapticFeedback.lightImpact();
                         scaffoldKey.currentState?.openDrawer();
                         timer.isRunning = false;
                       },
@@ -179,7 +178,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       icon: const Icon(Icons.replay),
                       tooltip: "Restart",
                       onPressed: () {
-                        HapticFeedback.mediumImpact();
+                        HapticFeedback.lightImpact();
                         setState(timer.restart);
                       },
                     ),
@@ -264,7 +263,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
                   child: const Text("Default Settings"),
                   onPressed: () async {
-                    HapticFeedback.mediumImpact();
+                    HapticFeedback.lightImpact();
                     await preferences.setInt("warmup", HIITDefault.warmup);
                     await preferences.setInt("work", HIITDefault.work);
                     await preferences.setInt("rest", HIITDefault.rest);

@@ -45,17 +45,14 @@ class TimerInputState extends State<TimerInput> {
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                     side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  showDialog(
-                    context: context,
-                    builder: (context) => ThemedTimerPicker(
-                      title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-                      initialTimerDuration: widget.value,
-                      onConfirm: widget.onConfirm,
-                    ),
-                  );
-                },
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => ThemedTimerPicker(
+                    title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                    initialTimerDuration: widget.value,
+                    onConfirm: widget.onConfirm,
+                  ),
+                ),
                 child: Text(
                   "${pad(widget.value.inMinutes)}:${pad(widget.value.inSeconds)}",
                   textScaleFactor: 1.1,
@@ -108,10 +105,7 @@ class ThemedTimerPickerState extends State<ThemedTimerPicker> {
       actions: [
         TextButton(
           child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         TextButton(
           child: Text("Confirm", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),

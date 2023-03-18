@@ -45,24 +45,21 @@ class NumberInputState extends State<NumberInput> {
             child: OutlinedButton(
               style:
                   OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
-              onPressed: () {
-                HapticFeedback.lightImpact();
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Theme(
-                      data: Theme.of(c),
-                      child: NumberPicker(
-                        title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-                        singleLabel: widget.singleLabel,
-                        pluralLabel: widget.pluralLabel,
-                        initialValue: widget.value,
-                        onConfirm: widget.onConfirm,
-                      ),
-                    );
-                  },
-                );
-              },
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) {
+                  return Theme(
+                    data: Theme.of(c),
+                    child: NumberPicker(
+                      title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                      singleLabel: widget.singleLabel,
+                      pluralLabel: widget.pluralLabel,
+                      initialValue: widget.value,
+                      onConfirm: widget.onConfirm,
+                    ),
+                  );
+                },
+              ),
               child: Text(
                 widget.value.toString(),
                 textScaleFactor: 1.1,
@@ -189,10 +186,7 @@ class NumberPickerState extends State<NumberPicker> {
       actions: [
         TextButton(
           child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         TextButton(
           child: Text("Confirm", style: TextStyle(color: Theme.of(context).colorScheme.secondary)),
