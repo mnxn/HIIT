@@ -179,7 +179,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       icon: const Icon(Icons.replay),
                       tooltip: "Restart",
                       onPressed: () {
-                        HapticFeedback.heavyImpact();
+                        HapticFeedback.mediumImpact();
                         setState(timer.restart);
                       },
                     ),
@@ -264,7 +264,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       side: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1)),
                   child: const Text("Default Settings"),
                   onPressed: () async {
-                    HapticFeedback.heavyImpact();
+                    HapticFeedback.mediumImpact();
                     await preferences.setInt("warmup", HIITDefault.warmup);
                     await preferences.setInt("work", HIITDefault.work);
                     await preferences.setInt("rest", HIITDefault.rest);
