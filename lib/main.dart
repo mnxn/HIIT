@@ -90,7 +90,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Text(useElapsedTitle ? timer.elapsedText : timer.remainingText),
           onTap: () async {
             await preferences.setBool("elapsed", !useElapsedTitle);
-            useElapsedTitle = !useElapsedTitle;
+            setState(() {
+              useElapsedTitle = !useElapsedTitle;
+            });
           },
         ),
         centerTitle: true,
