@@ -170,6 +170,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       icon: const Icon(Icons.settings),
                       tooltip: "Settings",
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         scaffoldKey.currentState?.openDrawer();
                         timer.isRunning = false;
                       },
